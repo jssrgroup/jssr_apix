@@ -43,7 +43,22 @@ return [
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
-            'hash' => false,
+            // 'hash' => false,
+        ],
+        'userpasss' => [
+            'driver' => 'jwt',
+            'provider' => 'userpasss',
+            // 'hash' => false,
+        ],
+        'useradmins' => [
+            'driver' => 'jwt',
+            'provider' => 'useradmins',
+            // 'hash' => false,
+        ],
+        'members' => [
+            'driver' => 'jwt',
+            'provider' => 'members',
+            // 'hash' => false,
         ],
     ],
 
@@ -68,6 +83,18 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'userpasss' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserPass::class,
+        ],
+        'useradmins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserAdmin::class,
+        ],
+        'members' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Member::class,
         ],
 
         // 'users' => [
@@ -94,6 +121,24 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'userpasss' => [
+            'provider' => 'userpasss',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'useradmins' => [
+            'provider' => 'useradmins',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'members' => [
+            'provider' => 'members',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,
