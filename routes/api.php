@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\UserPassController;
@@ -57,4 +58,19 @@ Route::group(['prefix' => 'member', 'middleware' => 'assign.guard:members'], fun
     Route::post('/logout', [MemberController::class, 'logout']);
     Route::post('/refresh', [MemberController::class, 'refresh']);
     Route::get('/user-profile', [MemberController::class, 'userProfile']);
+});
+
+Route::group(['prefix' => 'customer', 'middleware' => ['jwt.auth.member']], function () {
+    Route::get('/', [CustomerController::class, 'index']);
+    Route::post('/', [CustomerController::class, 'store']);
+});
+
+Route::group(['prefix' => 'userpass/customer', 'middleware' => ['jwt.auth.userpass']], function () {
+    Route::get('/', [CustomerController::class, 'index']);
+    Route::post('/', [CustomerController::class, 'store']);
+});
+
+Route::group(['prefix' => 'useradmin/customer', 'middleware' => ['jwt.auth.useradmin']], function () {
+    Route::get('/', [CustomerController::class, 'index']);
+    Route::post('/', [CustomerController::class, 'store']);
 });
