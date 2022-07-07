@@ -2,12 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Member;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class JwtVerifyMember
 {

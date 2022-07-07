@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\PersonalDataController;
 use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\UserPassController;
 
@@ -19,7 +20,7 @@ use App\Http\Controllers\UserPassController;
 |
 */
 
-Route::get('api/login', function(){
+Route::get('login', function(){
     return response()->json([
         'message' => 'Unauthorize 401',
     ], 401);
@@ -74,3 +75,7 @@ Route::group(['prefix' => 'useradmin/customer', 'middleware' => ['jwt.auth.usera
     Route::get('/', [CustomerController::class, 'index']);
     Route::post('/', [CustomerController::class, 'store']);
 });
+
+Route::apiResources(['pdata' => PersonalDataController::class]);
+Route::get('pdata-orderby', [PersonalDataController::class,'getOrderBy']);
+Route::put('pdata-orderby', [PersonalDataController::class,'updateOrderBy']);
