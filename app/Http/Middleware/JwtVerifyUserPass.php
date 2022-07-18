@@ -18,6 +18,7 @@ class JwtVerifyUserPass
     public function handle(Request $request, Closure $next)
     {
         try {
+            JWTAuth::setRequest($request)->parseToken()->authenticate();
             $user = auth('userpasss')->user();
             if ($user) {
                 // return response()->json(['status' => $user], 200);

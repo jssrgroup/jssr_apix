@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PersonalDataController;
 use App\Http\Controllers\UserAdminController;
@@ -63,7 +64,10 @@ Route::group(['prefix' => 'member', 'middleware' => 'assign.guard:members'], fun
 
 Route::group(['prefix' => 'customer', 'middleware' => ['jwt.auth.member']], function () {
     Route::get('/', [CustomerController::class, 'index']);
+    Route::get('/{id}', [CustomerController::class, 'show']);
     Route::post('/', [CustomerController::class, 'store']);
+    Route::put('/{id}', [CustomerController::class, 'update']);
+    Route::post('/acceptconsent/{id}', [CustomerController::class,'acceptConsent']);
 });
 
 Route::group(['prefix' => 'userpass/customer', 'middleware' => ['jwt.auth.userpass']], function () {
@@ -79,3 +83,27 @@ Route::group(['prefix' => 'useradmin/customer', 'middleware' => ['jwt.auth.usera
 Route::apiResources(['pdata' => PersonalDataController::class]);
 Route::get('pdata-orderby', [PersonalDataController::class,'getOrderBy']);
 Route::put('pdata-orderby', [PersonalDataController::class,'updateOrderBy']);
+Route::get('pdata-acceptconsent', [PersonalDataController::class,'getAcceptConsent']);
+Route::put('pdata-acceptconsent', [PersonalDataController::class,'updateAcceptConsent']);
+
+Route::post('encrypt', [PersonalDataController::class,'encrypt']);
+Route::post('decrypt', [PersonalDataController::class,'decrypt']);
+
+Route::get('image-upload/{name}', [ ImageUploadController::class, 'imageUpload' ])->name('image.upload');
+Route::post('image-upload', [ ImageUploadController::class, 'imageUploadPost' ])->name('image.upload.post');
+
+// Route::get('customer/{id}', [CustomerController::class, 'show']);
+
+// Route::group(['middleware' => 'auth:api'], function () {
+//     Route::apiResources([
+//         'user' => 'API\UserController',
+//         'posts' => 'API\PostController'
+//     ]);
+// });
+
+// Route::group(['middleware' => 'auth:api', 'namespace' => 'API'], function () {
+//     Route::apiResources([
+//         'user' => 'UserController',
+//         'posts' => 'PostController'
+//     ]);
+// });

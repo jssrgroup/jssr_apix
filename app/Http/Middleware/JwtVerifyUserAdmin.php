@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JwtVerifyUserAdmin
 {
@@ -18,6 +19,7 @@ class JwtVerifyUserAdmin
     public function handle(Request $request, Closure $next)
     {
         try {
+            JWTAuth::setRequest($request)->parseToken()->authenticate();
             $user = auth('useradmins')->user();
             if ($user) {
                 // return response()->json(['status' => $user], 200);

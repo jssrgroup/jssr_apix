@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JwtVerifyMember
 {
@@ -19,6 +19,7 @@ class JwtVerifyMember
     public function handle(Request $request, Closure $next)
     {
         try {
+            JWTAuth::setRequest($request)->parseToken()->authenticate();
             $user = auth('members')->user();
             if ($user) {
                 // return response()->json(['status' => $user], 200);

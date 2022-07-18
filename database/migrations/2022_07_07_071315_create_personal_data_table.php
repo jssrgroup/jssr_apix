@@ -17,8 +17,8 @@ class CreatePersonalDataTable extends Migration
             $table->id();           
             $table->string('code', 16)->unique();
             $table->string('name');
-            $table->boolean('necessary');
-            $table->integer('order_by');
+            $table->boolean('necessary')->default(false);
+            $table->integer('order_by')->default(0);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
             // $table->timestamps();

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PersonalData;
-use App\Models\Customer;
+use App;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -41,6 +41,7 @@ class PersonalDataController extends Controller
             // 'name' => 'in:DEFAULT,SOCIAL',
             'name' => 'required',
             'necessary' => 'boolean',
+            'order_by' => 'numeric',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -116,12 +117,17 @@ class PersonalDataController extends Controller
     public function updateOrderBy(Request $request)
     {
         $input = $request->all();
-        $data=[];
-        foreach ($input as $key=>$value) {
+        $validator = Validator::make($input, [
+            '*' => 'numeric',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $data = [];
+        foreach ($input as $key => $value) {
             DB::table('personal_data')
-            ->where('code', $key)
-            ->update(array('order_by' => $value));
-
+                ->where('code', $key)
+                ->update(array('order_by' => $value));
         }
         $personals = DB::table('personal_data')
             ->orderBy('order_by', 'asc')
@@ -130,6 +136,72 @@ class PersonalDataController extends Controller
         $data = [];
         foreach ($personals as $value) {
             $data[$value->code] = $value->order_by;
+        }
+        return response()->json($data);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function encrypt(Request $request)
+    {
+        return response()->json(jencrypt($request['text']));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function decrypt(Request $request)
+    {
+        $decrypt = json_decode(jdecrypt($request['token'], true));
+        return response()->json($decrypt);
+    }
+
+    /**
+     * getAcceptConsent
+     *
+     * @return Json
+     */
+    public function getAcceptConsent()
+    {
+        $personals = DB::table('personal_data')
+            ->orderBy('order_by', 'asc')
+            ->get();
+
+        $data = [];
+        foreach ($personals as $value) {
+            $data[$value->code] = ($value->necessary) ? true : false;
+        }
+        return response()->json($data);
+    }
+
+    public function updateAcceptConsent(Request $request)
+    {
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            '*' => 'boolean',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $data = [];
+        foreach ($input as $key => $value) {
+            DB::table('personal_data')
+                ->where('code', $key)
+                ->update(array('necessary' => $value));
+        }
+        $personals = DB::table('personal_data')
+            ->orderBy('order_by', 'asc')
+            ->get();
+
+        $data = [];
+        foreach ($personals as $value) {
+            $data[$value->code] = ($value->necessary) ? true : false;
         }
         return response()->json($data);
     }

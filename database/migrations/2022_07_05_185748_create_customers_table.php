@@ -18,6 +18,7 @@ class CreateCustomersTable extends Migration
             $table->string('username', 32)->unique();
             $table->string('password', 64);
             $table->longText('data')->nullable();
+            $table->longText('dataaccept')->nullable();
             $table->string('role')->default('U');
             $table->timestamps();
         });
