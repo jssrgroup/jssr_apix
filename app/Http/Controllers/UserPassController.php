@@ -27,6 +27,44 @@ class UserPassController extends Controller
         ], 200);
     }
 
+    /**
+     * @OA\Post(
+     * path="/api/user/login",
+     * summary="User Login",
+     * description="Login User Here",
+     * operationId="userAuthLogin",
+     * tags={"User"},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"username", "password"},
+     *               @OA\Property(property="username", type="text"),
+     *               @OA\Property(property="password", type="password")
+     *            ),
+     *        ),
+     *    ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Login Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Login Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
+     */
     public function login(Request $request)
     {
         // $request->request->add(['log_user' => $request['username']]);
@@ -58,18 +96,65 @@ class UserPassController extends Controller
         }
         return response()->json(['error' => 'invalid_credentials'], 401);
     }
-
+    /**
+     * @OA\Post(
+     * path="/api/user/logout",
+     * summary="User Logout",
+     * description="User Logout",
+     * operationId="UserLogout",
+     * tags={"User"},
+     * security={ {"bearer_token": {} }},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Logout Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     * )
+     */
     public function logout()
     {
         auth('userpasss')->logout();
         return response()->json(['message' => 'User successfully signed out']);
     }
-
+    /**
+     * @OA\Post(
+     * path="/api/user/refresh",
+     * summary="Refresh Token",
+     * description="Refresh Token",
+     * operationId="userRefreshToken",
+     * tags={"User"},
+     * security={ {"bearer_token": {} }},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Get User Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     * )
+     */
     public function refresh()
     {
         return $this->createNewToken(auth('userpasss')->refresh());
     }
-
+    /**
+     * @OA\Get(
+     * path="/api/user/user-profile",
+     * summary="Get User Detail",
+     * description="Get User Detail",
+     * operationId="GetUserDetail",
+     * tags={"User"},
+     * security={ {"bearer_token": {} }},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Get User Successfully",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="id", type="int", example=1),
+     *              @OA\Property(property="name", type="string", example="developer"),
+     *              @OA\Property(property="email", type="string", example="developer@jssr.co.th"),
+     *              @OA\Property(property="email_verified_at", type="string", example="01/01/2022"),
+     *          )
+     *       ),
+     * )
+     */
     public function userProfile() {
         return new UserPassResource(auth('userpasss')->user());
     }

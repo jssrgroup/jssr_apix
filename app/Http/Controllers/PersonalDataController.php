@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PersonalData;
 use App;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -17,14 +18,62 @@ class PersonalDataController extends Controller
      */
     public function index()
     {
-        $personals = PersonalData::all();
+        // $personals = PersonalData::all();
+        $personals = DB::table('personal_data')
+            ->orderBy('order_by', 'asc')
+            ->get();
 
-        $data = [];
-        foreach ($personals as $value) {
-            $data[$value['code']] = $value['name'];
+        // $data = [];
+        foreach ($personals as $pdata) {
+            // $pdata['value'] = '';
+            $pdata->value = '';
         }
-        return response()->json($data);
+        return response()->json([
+            "success" => true,
+            "message" => "Personaldata have data.",
+            "role" => 0,
+            "data" => $personals
+        ]);
+        // return $personals;
     }
+
+    public function getEditbyId($id)
+    {
+        // $personals = PersonalData::all();
+        $personals = DB::table('personal_data')
+            ->orderBy('order_by', 'asc')
+            ->get();
+        $customer = Customer::find($id);
+
+        $data = json_decode(jdecrypt($customer['data']), true);
+        $dataaccept = json_decode(jdecrypt($customer['dataaccept']), true);
+        // $data = [];
+        // foreach ($customer['data']['personal_data'] as $cus) {
+        foreach ($personals as $pdata) {
+            // $key = $pdata['code'];
+            $key = $pdata->code;
+            // $pdata['value'] = (isset($data[$key])) ? $data[$key] : '';
+            // $pdata['necessary'] = isset($dataaccept[$key]) ? ($dataaccept[$key] ? 1 : 0) : 0;
+            $pdata->value = (isset($data[$key])) ? $data[$key] : '';
+            $pdata->necessary = isset($dataaccept[$key]) ? ($dataaccept[$key] ? 1 : 0) : 0;
+            // $pdata['value'] = $key;
+
+            // foreach ($dataaccept as $datax) {
+            //     $pdata['necessary'] = (isset($datax[$key])) ? true : false;
+            //     // $pdata['necessary'] = 999;
+            // }
+        }
+        // }
+        return response()->json([
+            "success" => true,
+            "message" => "Personaldata have data.",
+            "role" => $customer['role'],
+            "data" => $personals
+        ]);
+        // return $personals;
+    }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -65,7 +114,18 @@ class PersonalDataController extends Controller
      */
     public function show($id)
     {
-        //
+        $personals = PersonalData::all();
+        $personal = $personals->find($id);
+        // $personals = DB::table('personal_data')
+        //     ->orderBy('order_by', 'asc')
+        //     ->get();
+        // $customer = Customer::find($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Personaldata have data.",
+            "data" => $personal
+        ]);
     }
 
     /**
@@ -88,7 +148,13 @@ class PersonalDataController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $data = PersonalData::destroy($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Delete data successfully.",
+            "data" => $data
+        ]);
     }
 
     /**

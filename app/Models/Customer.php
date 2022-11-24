@@ -25,7 +25,7 @@ class Customer extends Model
         'updated_at' => 'datetime:d/m/Y H:00',
     ];
 
-    protected $appends = ['personal_data', 'personal_accept_consent', 'update'];
+    protected $appends = ['personal_data', 'personal_accept_consent', 'personal_field', 'update'];
 
     public function getPersonalDataAttribute()
     {
@@ -80,6 +80,44 @@ class Customer extends Model
             }
         }
         return $acceptConsent;
+    }
+
+    public function getPersonalFieldAttribute()
+    {
+        $decrypt = json_decode(jdecrypt($this->attributes['data']), true);
+        // return $this->attributes['data'];
+        $acceptConsent = json_decode(jdecrypt($this->attributes['dataaccept']), true);
+        $personalData = DB::table('personal_data')
+            // ->where('necessary', true)
+            ->orderBy('order_by', 'asc')
+            ->select('code', 'necessary')
+            ->get();
+        $personals = [];
+        foreach ($personalData as $value) {
+            // if (array_key_exists($value->code, $decrypt))
+            $personals[$value->code] = $value->necessary ? true : false;
+        }
+        if (!$acceptConsent)
+            $acceptConsent = $personals;
+
+        // return $acceptConsent;
+        // return $personals;
+        $acceptConsent = array_merge($personals, $acceptConsent);
+        // return $acceptConsent;
+        // return array_unique(array_merge($acceptConsent, $personals));
+        try {
+            $data = [];
+            foreach ($acceptConsent as $key => $value) {
+                //     if (array_key_exists($key, $decrypt))
+                //         if ($value)
+                $data[$key] = (isset($decrypt[$key])) ? $decrypt[$key] : '';
+                // $data[$key] = array('value'=>$decrypt[$key]);
+            }
+            return $data;
+        } catch (\Throwable $th) {
+            throw $th;
+            // return $decrypt;
+        }
     }
 
     public function getUpdateAttribute()

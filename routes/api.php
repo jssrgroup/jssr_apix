@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PersonalDataController;
@@ -39,6 +40,7 @@ Route::group([
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['assign.guard:useradmins']], function () {
+    Route::get('/all', [UserAdminController::class, 'index']);
     Route::get('/demo', [UserAdminController::class, 'demo']);
     Route::post('/login', [UserAdminController::class, 'login']);
     Route::post('/logout', [UserAdminController::class, 'logout']);
@@ -62,12 +64,14 @@ Route::group(['prefix' => 'member', 'middleware' => 'assign.guard:members'], fun
     Route::get('/user-profile', [MemberController::class, 'userProfile']);
 });
 
-Route::group(['prefix' => 'customer', 'middleware' => ['jwt.auth.member']], function () {
+// Route::group(['prefix' => 'customer', 'middleware' => ['jwt.auth.member']], function () {
+Route::group(['prefix' => 'customer'], function () {
     Route::get('/', [CustomerController::class, 'index']);
     Route::get('/{id}', [CustomerController::class, 'show']);
     Route::post('/', [CustomerController::class, 'store']);
     Route::put('/{id}', [CustomerController::class, 'update']);
     Route::post('/acceptconsent/{id}', [CustomerController::class,'acceptConsent']);
+    Route::put('/acceptconsent/{id}', [CustomerController::class,'updateConsent']);
 });
 
 Route::group(['prefix' => 'userpass/customer', 'middleware' => ['jwt.auth.userpass']], function () {
@@ -81,6 +85,7 @@ Route::group(['prefix' => 'useradmin/customer', 'middleware' => ['jwt.auth.usera
 });
 
 Route::apiResources(['pdata' => PersonalDataController::class]);
+Route::get('pdata/edit/{id}', [PersonalDataController::class,'getEditbyId']);
 Route::get('pdata-orderby', [PersonalDataController::class,'getOrderBy']);
 Route::put('pdata-orderby', [PersonalDataController::class,'updateOrderBy']);
 Route::get('pdata-acceptconsent', [PersonalDataController::class,'getAcceptConsent']);
@@ -89,8 +94,13 @@ Route::put('pdata-acceptconsent', [PersonalDataController::class,'updateAcceptCo
 Route::post('encrypt', [PersonalDataController::class,'encrypt']);
 Route::post('decrypt', [PersonalDataController::class,'decrypt']);
 
+Route::get('image-upload', [ ImageUploadController::class, 'index' ])->name('image');
+Route::get('image-upload-all', [ ImageUploadController::class, 'getAll' ])->name('image.all');
 Route::get('image-upload/{name}', [ ImageUploadController::class, 'imageUpload' ])->name('image.upload');
 Route::post('image-upload', [ ImageUploadController::class, 'imageUploadPost' ])->name('image.upload.post');
+
+Route::get('images', [ImageController::class, 'index'])->name('images');
+Route::post('images', [ImageController::class, 'upload'])->name('images');
 
 // Route::get('customer/{id}', [CustomerController::class, 'show']);
 
