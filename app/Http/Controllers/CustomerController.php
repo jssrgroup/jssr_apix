@@ -13,9 +13,21 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class CustomerController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     * path="/api/customer",
+     * summary="Get All Customer",
+     * description="Get all customer data",
+     * operationId="customerGetAll",
+     * tags={"Customer"},
+     *   @OA\Response(
+     *      response=200,
+     *       description="Successfully",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
      */
     public function index()
     {
@@ -28,12 +40,33 @@ class CustomerController extends Controller
         // return new CustomerResource($customers);
         return $customers;
     }
-
     /**
-     * store
-     *
-     * @param  Illuminate\Http\Request $request
-     * @return void
+     * @OA\Post(
+     * path="/api/customer",
+     * summary="Create Customer",
+     * description="Create customer",
+     * operationId="customerCreate",
+     * tags={"Customer"},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"username", "password"},
+     *               @OA\Property(property="username", type="text"),
+     *               @OA\Property(property="password", type="text"),
+     *               @OA\Property(property="expireDate", type="text"),
+     *               @OA\Property(property="cusId", type="text")
+     *            ),
+     *    ),
+     *   @OA\Response(
+     *      response=201,
+     *       description="Successfully",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
      */
     public function store(Request $request)
     {
@@ -87,12 +120,31 @@ class CustomerController extends Controller
         ]);
     }
 
-
     /**
-     * show
-     *
-     * @param  int $id
-     * @return void
+     * @OA\Get(
+     * path="/api/customer/{id}",
+     * summary="Get Customer",
+     * description="Get customer data",
+     * operationId="customerGet",
+     * tags={"Customer"},
+    *      @OA\Parameter(
+     *          name="id",
+     *          description="Customer id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Successfully",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
      */
     public function show($id)
     {
@@ -111,11 +163,36 @@ class CustomerController extends Controller
     }
 
     /**
-     * update
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return void
+     * @OA\Put(
+     * path="/api/customer/{id}",
+     * summary="Update Customer",
+     * description="Update customer",
+     * operationId="customerUpdate",
+     * tags={"Customer"},
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Customer id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *            @OA\Schema(
+     *               type="object",
+     *            ),
+     *    ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Successfully",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
      */
     public function update(Request $request,  $id)
     {
