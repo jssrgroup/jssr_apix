@@ -18,19 +18,22 @@ class ImageUploadController extends Controller
      * description="Get file upload by id.",
      * operationId="imageUploadGet",
      * tags={"AWS"},
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(),
-     *            @OA\Schema(
-     *               type="object",
-     *               required={"id"},
-     *               @OA\Property(property="id", type="text"),
-     *            ),
-     *    ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successfully",
-     *          @OA\JsonContent()
-     *       ),
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Customer id",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Successfully",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
      *      @OA\Response(response=404, description="Resource Not Found"),
      * )
      */
@@ -54,11 +57,13 @@ class ImageUploadController extends Controller
      * description="Get file upload all.",
      * operationId="imageUploadAll",
      * tags={"AWS"},
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successfully",
-     *          @OA\JsonContent()
-     *       ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Successfully",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
      *      @OA\Response(response=404, description="Resource Not Found"),
      * )
      */
@@ -88,7 +93,7 @@ class ImageUploadController extends Controller
      *            mediaType="multipart/form-data",
      *            @OA\Schema(
      *               type="object",
-     *               required={"username", "password"},
+     *               required={"attachment", "filename", "expireDate", "cusId"},
      *               @OA\Property(property="attachment", type="file"),
      *               @OA\Property(property="filename", type="text"),
      *               @OA\Property(property="expireDate", type="text"),

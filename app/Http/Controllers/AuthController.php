@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Email;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -203,6 +204,17 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
+        ]);
+    }
+        
+
+    protected function email(){
+        $email = Email::all();
+        return response()->json([
+            'status' => true,
+            'status-code' => 200,
+            'message' => 'get email all',
+            'data' => $email
         ]);
     }
 }

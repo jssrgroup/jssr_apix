@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\MemberController;
@@ -100,7 +101,9 @@ Route::get('image-upload/{name}', [ ImageUploadController::class, 'imageUpload' 
 Route::post('image-upload', [ ImageUploadController::class, 'imageUploadPost' ])->name('image.upload.post');
 
 Route::get('images', [ImageController::class, 'index'])->name('images');
-Route::post('images', [ImageController::class, 'upload'])->name('images');
+Route::get('images', [ImageController::class, 'index'])->name('images');
+
+Route::get('emails', [EmailController::class, 'email']);
 
 // Route::get('customer/{id}', [CustomerController::class, 'show']);
 
