@@ -11,6 +11,28 @@ use Illuminate\Support\Facades\Validator;
 
 class PersonalDataController extends Controller
 {
+
+    function testRsa()
+    {
+        $public = \phpseclib3\Crypt\RSA::createKey();
+        // $public = $private->getPublicKey();
+        // $rsa = new Crypt_RSA();
+        $public->loadKey($privatekey);
+
+        $plaintext = 'terrafrost';
+
+        $ciphertext = $public->encrypt($plaintext);
+
+        // echo $ciphertext.'<br/>';
+        // echo $private->decrypt($ciphertext);
+        return response()->json([
+            "success" => true,
+            "message" => "Personaldata have data.",
+            "public" => $public,
+            // "encrypt" => $ciphertext.'',
+            "decrypt" => $private->decrypt($ciphertext)
+        ]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -67,6 +89,8 @@ class PersonalDataController extends Controller
         return response()->json([
             "success" => true,
             "message" => "Personaldata have data.",
+            "customer" => $customer,
+            "username" => $customer['username'],
             "role" => $customer['role'],
             "data" => $personals
         ]);

@@ -71,8 +71,10 @@ Route::group(['prefix' => 'customer'], function () {
     Route::get('/{id}', [CustomerController::class, 'show']);
     Route::post('/', [CustomerController::class, 'store']);
     Route::put('/{id}', [CustomerController::class, 'update']);
+    Route::delete('/{id}', [CustomerController::class, 'destroy']);
     Route::post('/acceptconsent/{id}', [CustomerController::class,'acceptConsent']);
     Route::put('/acceptconsent/{id}', [CustomerController::class,'updateConsent']);
+    Route::get('/attachment/{id}', [CustomerController::class,'attachment']);
 });
 
 Route::group(['prefix' => 'userpass/customer', 'middleware' => ['jwt.auth.userpass']], function () {
@@ -99,11 +101,13 @@ Route::get('image-upload', [ ImageUploadController::class, 'index' ])->name('ima
 Route::get('image-upload-all', [ ImageUploadController::class, 'getAll' ])->name('image.all');
 Route::get('image-upload/{name}', [ ImageUploadController::class, 'imageUpload' ])->name('image.upload');
 Route::post('image-upload', [ ImageUploadController::class, 'imageUploadPost' ])->name('image.upload.post');
+Route::delete('image-upload/{id}', [ ImageUploadController::class, 'deleteFile' ]);
 
 Route::get('images', [ImageController::class, 'index'])->name('images');
 Route::get('images', [ImageController::class, 'index'])->name('images');
 
 Route::get('emails', [EmailController::class, 'email']);
+Route::get('testRsa', [PersonalDataController::class, 'testRsa']);
 
 // Route::get('customer/{id}', [CustomerController::class, 'show']);
 

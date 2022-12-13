@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CustomerResource;
 use App\Models\Customer;
+use App\Models\ImageAws;
 use App\Models\PersonalData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,8 +71,16 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
+        // return response()->json([
+        //     "success" => true,
+        //     "message" => "Test.",
+        //     "data" => json_decode($request->getContent(), true)
+        // ]);
+        // $requestData = $request->all();
+        $req = json_decode($request->getContent(), true);
+        $requestData = $req;
         $validator = Validator::make(
-            $request->all(),
+            $requestData,
             [
                 'username' => 'required|min:3|max:32',
                 'password' => 'required',
@@ -99,8 +108,8 @@ class CustomerController extends Controller
         $dataaccept = [];
         foreach ($personals as $value) {
             $dataaccept[$value->code] = $value->necessary ? true : false;
-            if (array_key_exists($value->code, $request->all()) && $value->necessary)
-                $data[$value->code] = $request[$value->code];
+            if (array_key_exists($value->code, $requestData) && $value->necessary)
+                $data[$value->code] = $requestData[$value->code];
         }
         $json = json_encode($data);
         $jsonaccept = json_encode($dataaccept);
@@ -127,7 +136,7 @@ class CustomerController extends Controller
      * description="Get customer data",
      * operationId="customerGet",
      * tags={"Customer"},
-    *      @OA\Parameter(
+     *      @OA\Parameter(
      *          name="id",
      *          description="Customer id",
      *          required=true,
@@ -196,7 +205,14 @@ class CustomerController extends Controller
      */
     public function update(Request $request,  $id)
     {
-        $requestData = $request->all();
+        // return response()->json([
+        //     "success" => true,
+        //     "message" => "Test.",
+        //     "data" => json_encode($request->all()) //json_decode($request->getContent(), true)
+        // ]);
+        // $requestData = $request->all();
+        $req = json_decode($request->getContent(), true);
+        $requestData = $req;
         $requestData['id'] = $id;
         $validator = Validator::make(
             $requestData,
@@ -217,7 +233,11 @@ class CustomerController extends Controller
                 'role.required' => 'Role is required',
             ]
         );
-
+        //   return response()->json([
+        //             "success" => true,
+        //             "message" => "Test.",
+        //             "data" => $req
+        //         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
@@ -251,10 +271,17 @@ class CustomerController extends Controller
         // }
         foreach ($personals as $value) {
             // $dataaccept[$value->code] = $value->necessary ? true : false;
-            if (array_key_exists($value->code, $request->all()) && $value->necessary)
+            if (array_key_exists($value->code, $req) && $value->necessary)
                 // if (array_key_exists($value->code, $request->all()))
-                $data[$value->code] = $request[$value->code];
+                $data[$value->code] = $req[$value->code];
         }
+
+        //   return response()->json([
+        //     "success" => true,
+        //     "message" => "Test.",
+        //     "data" => $data
+        // ]);
+
         // foreach ($request->all() as $key => $value) {
         //     array_push($ndata, array('code' => $key, 'value' => $value));
         // }
@@ -262,7 +289,7 @@ class CustomerController extends Controller
         $encrypt = jencrypt($json);
 
         Customer::where('id', $requestData['id'])
-            ->update(['data' => $encrypt, 'role'=> $request['role']]);
+            ->update(['email' => $req['email'], 'mobile' => $req['mobile'], 'data' => $encrypt, 'role' => $req['role']]);
 
         return response()->json([
             "success" => true,
@@ -277,9 +304,18 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy($id)
     {
-        //
+        $customer = Customer::find($id);
+        if ($customer) {
+            Customer::destroy($id);
+        }
+
+        return response()->json([
+            "success" => isset($customer),
+            "message" => "Customer deleted.",
+            "data" => $customer
+        ]);
     }
 
     public function acceptConsent(Request $request, $id)
@@ -362,5 +398,18 @@ class CustomerController extends Controller
             "message" => "Customer update accept consent successfully.",
             "data" => $data
         ]);
+    }
+    public function attachment($id)
+    {
+        // $requestData = $request->all();
+        $validator = Validator::make(array('id' => $id), [
+            'id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+        $attachments = ImageAws::where('cus_id', $validator->validated()['id'])->get();
+        return $attachments;
+        // return $attachments->where('cus_id',$validator->validated()['id']);
     }
 }

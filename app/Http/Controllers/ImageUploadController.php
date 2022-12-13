@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ImageAws;
+use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -184,6 +186,68 @@ class ImageUploadController extends Controller
             // "url" => $url,
             // "path" => $path,
             "data" => $url,
+        ]);
+    }
+
+    public function deleteFile(Request $request, $id)
+    {
+        $requestData = $request->all();
+        $requestData['id'] = $id;
+        $validator = Validator::make($requestData, [
+            'id' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // $imageName = time() . '.' . $request->image->extension();
+        $customer = ImageAws::find($id);
+
+        $bucket = env("AWS_BUCKET", "apix.jssr.co.th");
+        $key = env("AWS_KEY", "images");
+        $region = env("AWS_DEFAULT_REGION", "ap-southeast-1");
+        $key = env("AWS_KEY", "images");
+        // $validator->validated()['filename'];
+        $keyname = $key . '/' . $customer['file_name'];
+
+
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region'  => $region
+        ]);
+
+        try
+        {        
+            $result = $s3->deleteObject([
+                'Bucket' => $bucket,
+                'Key'    => $keyname
+            ]);
+            $message = "Delete Object";
+            $customer->delete();
+        }
+        catch (S3Exception $e) {
+            $message = $e->getAwsErrorMessage();
+        }
+
+
+        /* Store $imageName name in DATABASE from HERE */
+        // ImageAws::create([
+        //     'image_name' => $request->filename,
+        //     'cus_id' => $request->cusId,
+        //     'file_name' => explode('/', $path)[1],
+        //     'expire_date_at' => $request->expireDate,
+        //     // 'expire_date_at' => Carbon::createFromFormat('Y-m-d', $request->expireDate)->format('Y-m-d H:i:s'),
+        // ]);
+
+        return response()->json([
+            "success" => true,
+            "message" => $message,
+            // // "data" => $validator->validated()['filename'],
+            "bucket" => $bucket,
+            "key" => $key,
+            "keyname" => $keyname,
+            "result" => $result,
+            // "customer" => $customer['file_name'],
         ]);
     }
 }
