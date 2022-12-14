@@ -71,7 +71,9 @@ Route::group(['prefix' => 'customer'], function () {
     Route::get('/{id}', [CustomerController::class, 'show']);
     Route::post('/', [CustomerController::class, 'store']);
     Route::put('/{id}', [CustomerController::class, 'update']);
+    Route::post('/update/{id}', [CustomerController::class, 'update']);
     Route::delete('/{id}', [CustomerController::class, 'destroy']);
+    Route::post('/delete/{id}', [CustomerController::class, 'destroy']);
     Route::post('/acceptconsent/{id}', [CustomerController::class,'acceptConsent']);
     Route::put('/acceptconsent/{id}', [CustomerController::class,'updateConsent']);
     Route::get('/attachment/{id}', [CustomerController::class,'attachment']);
