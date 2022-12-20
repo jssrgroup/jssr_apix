@@ -13,7 +13,7 @@ class UserAdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:useradmins', ['except' => ['demo', 'login', 'register']]);
+        $this->middleware('auth:useradmins', ['except' => ['index','demo', 'login', 'register']]);
     }
 
     public function index()
