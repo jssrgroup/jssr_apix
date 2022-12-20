@@ -23,7 +23,7 @@ use App\Http\Controllers\UserPassController;
 |
 */
 
-Route::get('login', function(){
+Route::get('login', function () {
     return response()->json([
         'message' => 'Unauthorize 401',
     ], 401);
@@ -74,9 +74,9 @@ Route::group(['prefix' => 'customer'], function () {
     Route::post('/update/{id}', [CustomerController::class, 'update']);
     Route::delete('/{id}', [CustomerController::class, 'destroy']);
     Route::post('/delete/{id}', [CustomerController::class, 'destroy']);
-    Route::post('/acceptconsent/{id}', [CustomerController::class,'acceptConsent']);
-    Route::put('/acceptconsent/{id}', [CustomerController::class,'updateConsent']);
-    Route::get('/attachment/{id}', [CustomerController::class,'attachment']);
+    Route::post('/acceptconsent/{id}', [CustomerController::class, 'acceptConsent']);
+    Route::put('/acceptconsent/{id}', [CustomerController::class, 'updateConsent']);
+    Route::get('/attachment/{id}', [CustomerController::class, 'attachment']);
 });
 
 Route::group(['prefix' => 'userpass/customer', 'middleware' => ['jwt.auth.userpass']], function () {
@@ -90,20 +90,21 @@ Route::group(['prefix' => 'useradmin/customer', 'middleware' => ['jwt.auth.usera
 });
 
 Route::apiResources(['pdata' => PersonalDataController::class]);
-Route::get('pdata/edit/{id}', [PersonalDataController::class,'getEditbyId']);
-Route::get('pdata-orderby', [PersonalDataController::class,'getOrderBy']);
-Route::put('pdata-orderby', [PersonalDataController::class,'updateOrderBy']);
-Route::get('pdata-acceptconsent', [PersonalDataController::class,'getAcceptConsent']);
-Route::put('pdata-acceptconsent', [PersonalDataController::class,'updateAcceptConsent']);
+Route::get('pdata/edit/{id}', [PersonalDataController::class, 'getEditbyId']);
+Route::get('pdata-orderby', [PersonalDataController::class, 'getOrderBy']);
+Route::put('pdata-orderby', [PersonalDataController::class, 'updateOrderBy']);
+Route::get('pdata-acceptconsent', [PersonalDataController::class, 'getAcceptConsent']);
+Route::put('pdata-acceptconsent', [PersonalDataController::class, 'updateAcceptConsent']);
 
-Route::post('encrypt', [PersonalDataController::class,'encrypt']);
-Route::post('decrypt', [PersonalDataController::class,'decrypt']);
+Route::post('encrypt', [PersonalDataController::class, 'encrypt']);
+Route::post('decrypt', [PersonalDataController::class, 'decrypt']);
 
-Route::get('image-upload', [ ImageUploadController::class, 'index' ])->name('image');
-Route::get('image-upload-all', [ ImageUploadController::class, 'getAll' ])->name('image.all');
-Route::get('image-upload/{name}', [ ImageUploadController::class, 'imageUpload' ])->name('image.upload');
-Route::post('image-upload', [ ImageUploadController::class, 'imageUploadPost' ])->name('image.upload.post');
-Route::delete('image-upload/{id}', [ ImageUploadController::class, 'deleteFile' ]);
+Route::get('image-upload', [ImageUploadController::class, 'index'])->name('image');
+Route::get('image-upload-all', [ImageUploadController::class, 'getAll'])->name('image.all');
+Route::get('image-upload/{name}', [ImageUploadController::class, 'imageUpload'])->name('image.upload');
+Route::post('image-upload', [ImageUploadController::class, 'imageUploadPost'])->name('image.upload.post');
+Route::delete('image-upload/{id}', [ImageUploadController::class, 'deleteFile']);
+Route::post('image-upload/delete/{id}', [ImageUploadController::class, 'deleteFile']);
 
 Route::get('images', [ImageController::class, 'index'])->name('images');
 Route::get('images', [ImageController::class, 'index'])->name('images');

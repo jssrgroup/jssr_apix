@@ -151,6 +151,14 @@ class ImageUploadController extends Controller
      */
     public function imageUploadPost(Request $request)
     {
+        // return response()->json([
+        //     "success" => true,
+        //     "message" => "[Test]You have successfully upload image.",
+        //     // "data" => $validator->validated()['filename'],
+        //     // "url" => $url,
+        //     // "path" => $path,
+        //     "data" => $request->all(),
+        // ]);
         $requestData = $request->all();
         $validator = Validator::make($requestData, [
             'attachment' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -159,7 +167,7 @@ class ImageUploadController extends Controller
             'cusId' => 'required|string',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            // return response()->json($validator->errors(), 422);
         }
 
         // $imageName = time() . '.' . $request->image->extension();
@@ -216,16 +224,14 @@ class ImageUploadController extends Controller
             'region'  => $region
         ]);
 
-        try
-        {        
+        try {
             $result = $s3->deleteObject([
                 'Bucket' => $bucket,
                 'Key'    => $keyname
             ]);
             $message = "Delete Object";
             $customer->delete();
-        }
-        catch (S3Exception $e) {
+        } catch (S3Exception $e) {
             $message = $e->getAwsErrorMessage();
         }
 
