@@ -33,7 +33,10 @@ class UserAdmin extends Model implements AuthenticatableContract, JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'username' => $this->USERNAME,
+            'empid' => $this->EMP_ID,
+        ];
     }
 
     public $timestamps = false;

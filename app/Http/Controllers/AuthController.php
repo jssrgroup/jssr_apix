@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Email;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,12 +18,44 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
-
     /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    * @OA\Post(
+    * path="/api/auth/login",
+    * summary="Auth Login",
+    * description="Login Auth Here",
+    * operationId="authAuthLogin",
+    * tags={"Auth"},
+    *     @OA\RequestBody(
+    *         @OA\JsonContent(),
+    *         @OA\MediaType(
+    *            mediaType="multipart/form-data",
+    *            @OA\Schema(
+    *               type="object",
+    *               required={"email", "password"},
+    *               @OA\Property(property="email", type="email"),
+    *               @OA\Property(property="password", type="password")
+    *            ),
+    *        ),
+    *    ),
+    *      @OA\Response(
+    *          response=201,
+    *          description="Login Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Login Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="Unprocessable Entity",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    * )
+    */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -37,11 +70,45 @@ class AuthController extends Controller
         }
         return $this->createNewToken($token);
     }
-
     /**
-     * Register a User.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     * path="/api/auth/register",
+     * operationId="Register",
+     * tags={"Auth"},
+     * summary="User Register",
+     * description="User Register here",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"name","email", "password", "password_confirmation"},
+     *               @OA\Property(property="name", type="text"),
+     *               @OA\Property(property="email", type="string", pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", format="email", example="test@gmail.com"),
+     *               @OA\Property(property="password", type="password"),
+     *               @OA\Property(property="password_confirmation", type="password")
+     *            ),
+     *        ),
+     *    ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Register Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Register Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=422,
+     *          description="Unprocessable Entity",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     * )
      */
     public function register(Request $request)
     {
@@ -62,32 +129,64 @@ class AuthController extends Controller
             'user' => $user
         ], 201);
     }
-
     /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     * path="/api/auth/logout",
+     * summary="Auth Logout",
+     * description="Auth Logout",
+     * operationId="AuthLogout",
+     * tags={"Auth"},
+     * security={ {"bearer_token": {} }},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Logout Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     * )
      */
     public function logout()
     {
         auth()->logout();
         return response()->json(['message' => 'User successfully signed out']);
     }
-
     /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Post(
+     * path="/api/auth/refresh",
+     * summary="Refresh Token",
+     * description="Refresh Token",
+     * operationId="authRefreshToken",
+     * tags={"Auth"},
+     * security={ {"bearer_token": {} }},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Get Auth Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     * )
      */
     public function refresh()
     {
         return $this->createNewToken(auth()->refresh());
     }
-
-        /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
+    /**
+     * @OA\Get(
+     * path="/api/auth/user-profile",
+     * summary="Get Auth Detail",
+     * description="Get Auth Detail",
+     * operationId="GetAuthDetail",
+     * tags={"Auth"},
+     * security={ {"bearer_token": {} }},
+     *      @OA\Response(
+     *          response=200,
+     *          description="Get User Successfully",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="id", type="int", example=1),
+     *              @OA\Property(property="name", type="string", example="developer"),
+     *              @OA\Property(property="email", type="string", example="developer@jssr.co.th"),
+     *              @OA\Property(property="email_verified_at", type="string", example="01/01/2022"),
+     *          )
+     *       ),
+     * )
      */
     public function userProfile() {
         return response()->json(auth()->user());
@@ -105,6 +204,17 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
+        ]);
+    }
+        
+
+    protected function email(){
+        $email = Email::all();
+        return response()->json([
+            'status' => true,
+            'status-code' => 200,
+            'message' => 'get email all',
+            'data' => $email
         ]);
     }
 }
