@@ -15,6 +15,14 @@ class MemberController extends Controller
     {
         $this->middleware('auth:members', ['except' => ['login', 'register']]);
     }
+    public function index()
+    {
+        $members = Member::all();
+        return response()->json([
+            'message' => 'Member List',
+            'data' => $members
+        ], 200);
+    }
     public function demo()
     {
         $user = Member::where('user_name', 'sanchai')

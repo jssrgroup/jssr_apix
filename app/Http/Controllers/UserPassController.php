@@ -19,9 +19,11 @@ class UserPassController extends Controller
     
     public function index()
     {
-        $userp = UserPass::all();
-        
-        return $userp;
+        $users = UserPass::all();
+        return response()->json([
+            'message' => 'User List',
+            'data' => $users
+        ], 200);
     }
 
     public function demo()

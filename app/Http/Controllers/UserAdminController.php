@@ -19,8 +19,10 @@ class UserAdminController extends Controller
     public function index()
     {
         $admins = UserAdmin::all();
-        
-        return $admins;
+        return response()->json([
+            'message' => 'Admin List',
+            'data' => $admins
+        ], 200);
     }
 
     public function demo()

@@ -17,6 +17,15 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    } 
+
+    public function index()
+    {
+        $users = User::all();
+        return response()->json([
+            'message' => 'User List',
+            'data' => $users
+        ], 200);
     }
     /**
     * @OA\Post(

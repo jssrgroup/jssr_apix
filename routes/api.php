@@ -33,6 +33,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
+    Route::get('/all', [AuthController::class, 'index']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -59,6 +60,7 @@ Route::group(['prefix' => 'user', 'middleware' => 'assign.guard:userpasss'], fun
 });
 
 Route::group(['prefix' => 'member', 'middleware' => 'assign.guard:members'], function () {
+    Route::get('/all', [MemberController::class, 'index']);
     Route::get('/demo', [MemberController::class, 'demo']);
     Route::post('/login', [MemberController::class, 'login']);
     Route::post('/logout', [MemberController::class, 'logout']);
@@ -128,3 +130,21 @@ Route::get('testRsa', [PersonalDataController::class, 'testRsa']);
 //         'posts' => 'PostController'
 //     ]);
 // });
+Route::group([
+    'prefix' => 'v2'
+], function ($router) {
+    Route::group([
+        'prefix' => 'customer'
+    ], function ($router) {
+        Route::get('/hello', function(){
+            return 'Hello Customer';
+        });
+    });
+    Route::group([
+        'prefix' => 'admin'
+    ], function ($router) {
+        Route::get('/hello', function(){
+            return 'Hello Admin';
+        });
+    });
+});
