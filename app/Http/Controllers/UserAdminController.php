@@ -93,6 +93,13 @@ class UserAdminController extends Controller
         }
 
         try {
+
+            UserAdmin::where('INDX', $user['INDX'])->update([
+                'LAST_LOGIN' => time(),
+            ]);
+
+            $user = UserAdmin::where('INDX', $user['INDX'])->first();
+
             $token = JWTAuth::fromUser($user);
 
             return response()->json(["status" => 200, "data" => [

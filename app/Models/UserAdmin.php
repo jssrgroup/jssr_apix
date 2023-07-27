@@ -21,7 +21,7 @@ class UserAdmin extends Model implements AuthenticatableContract, JWTSubject
 
     protected $hidden = [
         'PASSWORD', 'UPDATE_DATE', 'PASSWORD_OLD', 'LEVEL', 'LEVEL_POINT', 'LEVEL_KM', 'CHANGE_STATUS',
-        'LEVEL_OUR', 'STATUS', 'STATUS_ADMIN', 'LAST_LOGIN', '', '', '',
+        'LEVEL_OUR', '', '', '', '', '', '',
         '', '', '', '', '', '', '',
         '', '', '', '', '', '', '',
     ];

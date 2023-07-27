@@ -143,6 +143,7 @@ Route::group([
     Route::group([
         'prefix' => 'admin'
     ], function ($router) {
+        Route::get('/all', [UserAdminController::class, 'index']);
         Route::get('/hello', function(){
             return 'Hello Admin';
         });
