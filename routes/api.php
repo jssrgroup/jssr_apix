@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageUploadController;
+use App\Http\Controllers\ImageUploadCusController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PersonalDataController;
 use App\Http\Controllers\UserAdminController;
@@ -80,6 +81,7 @@ Route::group(['prefix' => 'customer'], function () {
     Route::post('/acceptconsent/{id}', [CustomerController::class, 'acceptConsent']);
     Route::put('/acceptconsent/{id}', [CustomerController::class, 'updateConsent']);
     Route::get('/attachment/{id}', [CustomerController::class, 'attachment']);
+    Route::get('/attachmentCus/{id}', [CustomerController::class, 'attachmentCus']);
 });
 
 Route::group(['prefix' => 'userpass/customer', 'middleware' => ['jwt.auth.userpass']], function () {
@@ -108,6 +110,13 @@ Route::get('image-upload/{name}', [ImageUploadController::class, 'imageUpload'])
 Route::post('image-upload', [ImageUploadController::class, 'imageUploadPost'])->name('image.upload.post');
 Route::delete('image-upload/{id}', [ImageUploadController::class, 'deleteFile']);
 Route::post('image-upload/delete/{id}', [ImageUploadController::class, 'deleteFile']);
+
+Route::get('image-upload-cus', [ImageUploadCusController::class, 'index']);
+Route::get('image-upload-cus-all', [ImageUploadCusController::class, 'getAll']);
+Route::get('image-upload-cus/{name}', [ImageUploadCusController::class, 'imageUpload']);
+Route::post('image-upload-cus', [ImageUploadCusController::class, 'imageUploadPost']);
+Route::delete('image-upload-cus/{id}', [ImageUploadCusController::class, 'deleteFile']);
+Route::post('image-upload-cus/delete/{id}', [ImageUploadCusController::class, 'deleteFile']);
 
 Route::get('images', [ImageController::class, 'index'])->name('images');
 Route::get('images', [ImageController::class, 'index'])->name('images');

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateImageAwsTable extends Migration
+class CreateImageCusAwsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateImageAwsTable extends Migration
      */
     public function up()
     {
-        Schema::create('image_aws', function (Blueprint $table) {
+        Schema::create('image_cus_aws', function (Blueprint $table) {
             $table->id();
             $table->integer('cus_id');
             $table->string('image_name')->nullable();
@@ -30,6 +30,6 @@ class CreateImageAwsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('image_aws');
+        Schema::dropIfExists('image_cus_aws');
     }
 }

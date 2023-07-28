@@ -133,7 +133,7 @@ class ImageUploadController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $key = env("AWS_KEY", "images");
-        $temporarySignedUrl = Storage::disk('s3')->temporaryUrl($key . '/' . $validator->validated()['name'], now()->addMinutes(1));
+        $temporarySignedUrl = Storage::disk('s3')->temporaryUrl($key . '/customer/' . $validator->validated()['name'], now()->addMinutes(1));
 
 
         return response()->json([
@@ -161,7 +161,7 @@ class ImageUploadController extends Controller
         // ]);
         $requestData = $request->all();
         $validator = Validator::make($requestData, [
-            'attachment' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'attachment' => 'required|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:20480',
             'filename' => 'required|string',
             'expireDate' => 'required|string',
             'cusId' => 'required|string',
@@ -173,7 +173,7 @@ class ImageUploadController extends Controller
         // $imageName = time() . '.' . $request->image->extension();
 
         $key = env("AWS_KEY", "images");
-        $path = Storage::disk('s3')->put($key, $request->attachment);
+        $path = Storage::disk('s3')->put($key.'/customer', $request->attachment);
         $url = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1));
         // $url = Storage::disk('s3')->url($path);
 
@@ -182,7 +182,7 @@ class ImageUploadController extends Controller
         ImageAws::create([
             'image_name' => $request->filename,
             'cus_id' => $request->cusId,
-            'file_name' => explode('/', $path)[1],
+            'file_name' => explode('/', $path)[2],
             'expire_date_at' => $request->expireDate,
             // 'expire_date_at' => Carbon::createFromFormat('Y-m-d', $request->expireDate)->format('Y-m-d H:i:s'),
         ]);
@@ -216,7 +216,7 @@ class ImageUploadController extends Controller
         $region = env("AWS_DEFAULT_REGION", "ap-southeast-1");
         $key = env("AWS_KEY", "images");
         // $validator->validated()['filename'];
-        $keyname = $key . '/' . $customer['file_name'];
+        $keyname = $key . '/customer/' . $customer['file_name'];
 
 
         $s3 = new S3Client([

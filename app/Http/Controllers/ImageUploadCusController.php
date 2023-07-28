@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ImageAws;
+use App\Models\ImageCusAws;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Carbon\Carbon;
@@ -48,9 +48,9 @@ class ImageUploadCusController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $attachments = ImageAws::where('cus_id', $validator->validated()['id'])->get();
+        // return $validator->validated()['id'];
+        $attachments = ImageCusAws::where('cus_id', $validator->validated()['id'])->get();
         return $attachments;
-        // return $attachments->where('cus_id',$validator->validated()['id']);
     }
     /**
      * @OA\Get(
@@ -78,7 +78,7 @@ class ImageUploadCusController extends Controller
         // if ($validator->fails()) {
         //     return response()->json($validator->errors(), 422);
         // }
-        $attachments = ImageAws::all();
+        $attachments = ImageCusAws::all();
         return $attachments;
         // return $attachments->where('cus_id',$validator->validated()['id']);
     }
@@ -133,7 +133,7 @@ class ImageUploadCusController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $key = env("AWS_KEY", "images");
-        $temporarySignedUrl = Storage::disk('s3')->temporaryUrl($key . '/' . $validator->validated()['name'], now()->addMinutes(1));
+        $temporarySignedUrl = Storage::disk('s3')->temporaryUrl($key . '/member/' . $validator->validated()['name'], now()->addMinutes(1));
 
 
         return response()->json([
@@ -151,38 +151,31 @@ class ImageUploadCusController extends Controller
      */
     public function imageUploadPost(Request $request)
     {
-        // return response()->json([
-        //     "success" => true,
-        //     "message" => "[Test]You have successfully upload image.",
-        //     // "data" => $validator->validated()['filename'],
-        //     // "url" => $url,
-        //     // "path" => $path,
-        //     "data" => $request->all(),
-        // ]);
         $requestData = $request->all();
         $validator = Validator::make($requestData, [
-            'attachment' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'attachment' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'attachment' => 'required',
             'filename' => 'required|string',
             'expireDate' => 'required|string',
             'cusId' => 'required|string',
         ]);
         if ($validator->fails()) {
-            // return response()->json($validator->errors(), 422);
+            return response()->json($validator->errors(), 422);
         }
 
         // $imageName = time() . '.' . $request->image->extension();
 
         $key = env("AWS_KEY", "images");
-        $path = Storage::disk('s3')->put($key, $request->attachment);
+        $path = Storage::disk('s3')->put($key . '/member', $request->attachment);
         $url = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(1));
         // $url = Storage::disk('s3')->url($path);
 
 
         /* Store $imageName name in DATABASE from HERE */
-        ImageAws::create([
+        ImageCusAws::create([
             'image_name' => $request->filename,
             'cus_id' => $request->cusId,
-            'file_name' => explode('/', $path)[1],
+            'file_name' => explode('/', $path)[2],
             'expire_date_at' => $request->expireDate,
             // 'expire_date_at' => Carbon::createFromFormat('Y-m-d', $request->expireDate)->format('Y-m-d H:i:s'),
         ]);
@@ -209,14 +202,17 @@ class ImageUploadCusController extends Controller
         }
 
         // $imageName = time() . '.' . $request->image->extension();
-        $customer = ImageAws::find($id);
+        $customer = ImageCusAws::find($id);
+
+        if ($validator->fails()) {
+            return response()->json("ไม่พบข้อมูล", 400);
+        }
 
         $bucket = env("AWS_BUCKET", "apix.jssr.co.th");
         $key = env("AWS_KEY", "images");
         $region = env("AWS_DEFAULT_REGION", "ap-southeast-1");
-        $key = env("AWS_KEY", "images");
         // $validator->validated()['filename'];
-        $keyname = $key . '/' . $customer['file_name'];
+        $keyname = $key . '/member/' . $customer['file_name'];
 
 
         $s3 = new S3Client([

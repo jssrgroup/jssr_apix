@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateImageAwsTable extends Migration
+class CreateDocumentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateImageAwsTable extends Migration
      */
     public function up()
     {
-        Schema::create('image_aws', function (Blueprint $table) {
+        Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->integer('cus_id');
+            $table->integer('ref_id');
+            $table->integer('ref_dep_id');
             $table->string('image_name')->nullable();
             $table->string('file_name')->nullable();
             $table->timestamp('expire_date_at')->nullable();
@@ -30,6 +31,6 @@ class CreateImageAwsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('image_aws');
+        Schema::dropIfExists('documents');
     }
 }
