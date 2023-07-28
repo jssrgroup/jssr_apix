@@ -13,14 +13,14 @@ class MemberController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:members', ['except' => ['login', 'register']]);
+        $this->middleware('auth:members', ['except' => ['login', 'register', 'index']]);
     }
     public function index()
     {
         $members = Member::all();
         return response()->json([
             'message' => 'Member List',
-            'data' => $members
+            'data' => MemberResource::collection($members)
         ], 200);
     }
     public function demo()

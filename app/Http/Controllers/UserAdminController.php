@@ -21,7 +21,7 @@ class UserAdminController extends Controller
         $admins = UserAdmin::all();
         return response()->json([
             'message' => 'Admin List',
-            'data' => $admins
+            'data' => UserAdminResource::collection($admins)
         ], 200);
     }
 
