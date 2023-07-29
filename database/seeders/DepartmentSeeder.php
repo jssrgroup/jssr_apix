@@ -24,7 +24,7 @@ class DepartmentSeeder extends Seeder
         );
 
         foreach ($data as $value) {
-            DB::table('department')->insert([
+            DB::table('departments')->insert([
                 'code' => $value['code'],
                 'desc' => $value['desc'],
             ]);

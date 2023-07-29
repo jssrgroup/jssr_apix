@@ -30,6 +30,7 @@ class UserAdminResource extends JsonResource
             'accessRegister' => unserialize($this->ACCESS_REGISTER),
             'accessInspection' => unserialize($this->ACCESS_INSPECTION),
             'accessGeneral' => unserialize($this->ACCESS_GENERAL),
+            'role' => new UserManagementResource($this->role),
         ];
             // "INDX": 146,
     // "USERNAME": "tanakphong",

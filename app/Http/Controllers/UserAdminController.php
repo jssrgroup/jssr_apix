@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserAdminResource;
+use App\Http\Resources\UserManagementResource;
 use App\Models\UserAdmin;
+use App\Models\UserManagement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -13,7 +15,7 @@ class UserAdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:useradmins', ['except' => ['index','demo', 'login', 'register']]);
+        $this->middleware('auth:useradmins', ['except' => ['index', 'demo', 'login', 'register']]);
     }
 
     public function index()
@@ -99,12 +101,14 @@ class UserAdminController extends Controller
             ]);
 
             $user = UserAdmin::where('INDX', $user['INDX'])->first();
+            $userManagement = UserManagement::where('user_id', $user['INDX'])->first();
+            $user['role'] = $userManagement;
 
             $token = JWTAuth::fromUser($user);
 
             return response()->json(["status" => 200, "data" => [
                 "access_token" => $token,
-                "user" => new UserAdminResource($user)
+                "user" => new UserAdminResource($user),
             ]]);
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);

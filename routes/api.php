@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageUploadController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\ImageUploadCusController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PersonalDataController;
 use App\Http\Controllers\UserAdminController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\UserPassController;
 
 /*
@@ -142,6 +145,22 @@ Route::get('testRsa', [PersonalDataController::class, 'testRsa']);
 Route::group([
     'prefix' => 'v2'
 ], function ($router) {
+    Route::group([
+        'prefix' => 'department'
+    ], function ($router) {
+        Route::get('/all', [DepartmentController::class, 'index']);
+    });
+    Route::group([
+        'prefix' => 'document'
+    ], function ($router) {
+        Route::get('/all', [DocumentController::class, 'index']);
+        Route::get('/all/{depId}', [DocumentController::class, 'getAllByDep']);
+    });
+    Route::group([
+        'prefix' => 'userManagement'
+    ], function ($router) {
+        Route::get('/all', [UserManagementController::class, 'index']);
+    });
     Route::group([
         'prefix' => 'customer'
     ], function ($router) {
