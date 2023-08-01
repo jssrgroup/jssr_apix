@@ -16,4 +16,12 @@ class DepartmentController extends Controller
             'data' => DepartmemtResource::collection($departments)
         ], 200);
     }
+    public function getById($id)
+    {
+        $department = Department::find($id);
+        return response()->json([
+            'message' => 'Department Data',
+            'data' => $department
+        ], 200);
+    }
 }

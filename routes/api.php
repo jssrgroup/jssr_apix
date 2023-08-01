@@ -149,6 +149,7 @@ Route::group([
         'prefix' => 'department'
     ], function ($router) {
         Route::get('/all', [DepartmentController::class, 'index']);
+        Route::get('/{id}', [DepartmentController::class, 'getById']);
     });
     Route::group([
         'prefix' => 'document'
@@ -172,10 +173,12 @@ Route::group([
         'prefix' => 'admin'
     ], function ($router) {
         Route::get('/all', [UserAdminController::class, 'index']);
+        Route::get('/{id}', [UserAdminController::class, 'getById']);
     });
     Route::group([
         'prefix' => 'member'
     ], function ($router) {
         Route::get('/all', [MemberController::class, 'index']);
+        Route::get('/{id}', [MemberController::class, 'getById']);
     });
 });

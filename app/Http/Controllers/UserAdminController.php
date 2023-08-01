@@ -15,7 +15,7 @@ class UserAdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:useradmins', ['except' => ['index', 'demo', 'login', 'register']]);
+        $this->middleware('auth:useradmins', ['except' => ['index', 'demo', 'login', 'register','getById']]);
     }
 
     public function index()
@@ -26,7 +26,14 @@ class UserAdminController extends Controller
             'data' => UserAdminResource::collection($admins)
         ], 200);
     }
-
+    public function getById($id)
+    {
+        $admin = UserAdmin::find($id);
+        return response()->json([
+            'message' => 'Admin Data',
+            'data' => new UserAdminResource($admin),
+        ], 200);
+    }
     public function demo()
     {
         $admin = UserAdmin::where('username', 'tanakphong')

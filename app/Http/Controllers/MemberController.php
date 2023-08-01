@@ -13,7 +13,7 @@ class MemberController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:members', ['except' => ['login', 'register', 'index']]);
+        $this->middleware('auth:members', ['except' => ['login', 'register', 'index', 'getById']]);
     }
     public function index()
     {
@@ -21,6 +21,14 @@ class MemberController extends Controller
         return response()->json([
             'message' => 'Member List',
             'data' => MemberResource::collection($members)
+        ], 200);
+    }
+    public function getById($id)
+    {
+        $member = Member::find($id);
+        return response()->json([
+            'message' => 'Member Data',
+            'data' => new MemberResource($member)
         ], 200);
     }
     public function demo()
