@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\DocumentTypeController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageUploadController;
@@ -15,6 +16,22 @@ use App\Http\Controllers\PersonalDataController;
 use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\UserPassController;
+
+// Function
+function parseLocale()
+{
+    $locale = request()->segment(3);
+    $locales = config('app.locales');
+    $default = config('app.fallback_locale');
+
+    if (in_array($locale, $locales)) {
+        app()->setLocale($locale);
+        return $locale;
+    // }else{
+    //     app()->setLocale($default);
+    //     return $locale;
+    }
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -146,39 +163,68 @@ Route::group([
     'prefix' => 'v2'
 ], function ($router) {
     Route::group([
-        'prefix' => 'department'
+        'prefix' => parseLocale(),//'{locale}',//
+        // 'middleware' => 'setlocale'
     ], function ($router) {
-        Route::get('/all', [DepartmentController::class, 'index']);
-        Route::get('/{id}', [DepartmentController::class, 'getById']);
-    });
-    Route::group([
-        'prefix' => 'document'
-    ], function ($router) {
-        Route::get('/all', [DocumentController::class, 'index']);
-        Route::get('/all/{depId}', [DocumentController::class, 'getAllByDep']);
-    });
-    Route::group([
-        'prefix' => 'userManagement'
-    ], function ($router) {
-        Route::get('/all', [UserManagementController::class, 'index']);
-    });
-    Route::group([
-        'prefix' => 'customer'
-    ], function ($router) {
-        Route::get('/hello', function(){
-            return 'Hello Customer';
+        Route::get('/', function (Request $request) {
+            // return config('app.locales');
+            // return $request->segment(3);
+            // $locale = request()->segment(3);
+            // $locales = config('app.locales');
+            // $default = config('app.fallback_locale');
+
+            // if ($locale !== $default && in_array($locale, $locales)) {
+            // //     app()->setLocale($locale);
+            // return $locale;
+            // }
+            // return $locale !== $default && in_array($locale, $locales);
+            return trans('validation.required').app()->currentLocale();
         });
-    });
-    Route::group([
-        'prefix' => 'admin'
-    ], function ($router) {
-        Route::get('/all', [UserAdminController::class, 'index']);
-        Route::get('/{id}', [UserAdminController::class, 'getById']);
-    });
-    Route::group([
-        'prefix' => 'member'
-    ], function ($router) {
-        Route::get('/all', [MemberController::class, 'index']);
-        Route::get('/{id}', [MemberController::class, 'getById']);
+        Route::group([
+            'prefix' => 'department'
+        ], function ($router) {
+            Route::get('/all', [DepartmentController::class, 'index']);
+            Route::get('/{id}', [DepartmentController::class, 'getById']);
+        });
+        Route::group([
+            'prefix' => 'documentType'
+        ], function ($router) {
+            Route::get('/all', [DocumentTypeController::class, 'index']);
+            Route::get('/{depId}/all', [DocumentTypeController::class, 'getDocTypeByDep']);
+            Route::get('/{depId}/all/{docId}', [DocumentTypeController::class, 'getDocTypeByDepAndDoc']);
+            Route::post('/add', [DocumentTypeController::class, 'store']);
+            Route::put('/{id}/update', [DocumentTypeController::class, 'update']);
+            Route::delete('/{id}/delete', [DocumentTypeController::class, 'destroy']);
+        });
+        Route::group([
+            'prefix' => 'document'
+        ], function ($router) {
+            Route::get('/all', [DocumentController::class, 'index']);
+            Route::get('/all/{depId}', [DocumentController::class, 'getAllByDep']);
+        });
+        Route::group([
+            'prefix' => 'userManagement'
+        ], function ($router) {
+            Route::get('/all', [UserManagementController::class, 'index']);
+        });
+        Route::group([
+            'prefix' => 'customer'
+        ], function ($router) {
+            Route::get('/hello', function () {
+                return config('app.locales');
+            });
+        });
+        Route::group([
+            'prefix' => 'admin'
+        ], function ($router) {
+            Route::get('/all', [UserAdminController::class, 'index']);
+            Route::get('/{id}', [UserAdminController::class, 'getById']);
+        });
+        Route::group([
+            'prefix' => 'member'
+        ], function ($router) {
+            Route::get('/all', [MemberController::class, 'index']);
+            Route::get('/{id}', [MemberController::class, 'getById']);
+        });
     });
 });

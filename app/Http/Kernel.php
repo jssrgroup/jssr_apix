@@ -43,6 +43,7 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // \App\Http\Middleware\SetLocale::class,
         ],
     ];
 
@@ -67,5 +68,6 @@ class Kernel extends HttpKernel
         'jwt.auth.userpass' => \App\Http\Middleware\JwtVerifyUserPass::class,
         'jwt.auth.useradmin' => \App\Http\Middleware\JwtVerifyUserAdmin::class,
         'jwt.auth.member' => \App\Http\Middleware\JwtVerifyMember::class,
+        'setlocale' => \App\Http\Middleware\SetLocale::class,
     ];
 }
