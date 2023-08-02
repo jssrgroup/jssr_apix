@@ -184,7 +184,10 @@ Route::group([
             'prefix' => 'department'
         ], function ($router) {
             Route::get('/all', [DepartmentController::class, 'index']);
-            Route::get('/{id}', [DepartmentController::class, 'getById']);
+            Route::get('/{id}', [DepartmentController::class, 'getById']);          
+            Route::post('/add', [DepartmentController::class, 'store']);
+            Route::put('/{id}/update', [DepartmentController::class, 'update']);
+            Route::delete('/{id}/delete', [DepartmentController::class, 'destroy']);
         });
         Route::group([
             'prefix' => 'documentType'
