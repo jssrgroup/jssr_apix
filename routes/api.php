@@ -206,6 +206,10 @@ Route::group([
             'prefix' => 'userManagement'
         ], function ($router) {
             Route::get('/all', [UserManagementController::class, 'index']);
+            Route::get('/{id}', [UserManagementController::class, 'getById']);            
+            Route::post('/add', [UserManagementController::class, 'store']);
+            Route::put('/{id}/update', [UserManagementController::class, 'update']);
+            Route::delete('/{id}/delete', [UserManagementController::class, 'destroy']);
         });
         Route::group([
             'prefix' => 'customer'

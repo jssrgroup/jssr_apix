@@ -14,8 +14,8 @@ class UpdateUserManagementTableAddStatus extends Migration
     public function up()
     {
         Schema::table('user_management', function (Blueprint $table) {
-            $table->boolean('status');
-            $table->boolean('is_delete');
+            $table->boolean('status')->default(1);
+            $table->boolean('is_delete')->default(0);
         });
     }
 

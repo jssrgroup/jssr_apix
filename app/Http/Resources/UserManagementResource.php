@@ -15,6 +15,7 @@ class UserManagementResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'userId' => $this->user_id,
             'depId' => $this->dep_id,
             'roleId' => $this->role_id,

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserManagementRequest;
+use App\Http\Requests\UpdateUserManagementRequest;
 use App\Http\Resources\UserManagementResource;
 use App\Models\UserManagement;
 use Illuminate\Http\Request;
@@ -22,6 +24,15 @@ class UserManagementController extends Controller
         ], 200);
     }
 
+    public function getById($id)
+    {
+        $userManagement = UserManagement::find($id);
+        return response()->json([
+            'message' => 'User Management Data',
+            'data' => new UserManagementResource($userManagement),
+        ], 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -38,9 +49,22 @@ class UserManagementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUserManagementRequest $request)
     {
-        //
+
+        $validated = $request->safe()->all();
+
+        $input = array_filter($validated, function ($value) {
+            return $value !== null;
+        });
+
+        $userManagement = UserManagement::create($input);
+
+        return response()->json([
+            "success" => true,
+            "message" => "Document Type created successfully.",
+            "data" => $userManagement
+        ]);
     }
 
     /**
@@ -72,9 +96,23 @@ class UserManagementController extends Controller
      * @param  \App\Models\UserManagement  $userManagement
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UserManagement $userManagement)
+    public function update(UpdateUserManagementRequest $request, $id)
     {
-        //
+        $validated = $request->safe()->all();
+
+        $input = array_filter($validated, function ($value) {
+            return $value !== null;
+        });
+
+        $userManagement = UserManagement::find($id);
+        $userManagement->update($input);
+        
+
+        return response()->json([
+            "success" => true,
+            "message" => "Document Type updated successfully.",
+            "data" => $userManagement
+        ]);
     }
 
     /**
@@ -83,8 +121,13 @@ class UserManagementController extends Controller
      * @param  \App\Models\UserManagement  $userManagement
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserManagement $userManagement)
+    public function destroy($id)
     {
-        //
+        UserManagement::destroy($id);
+
+        return response()->json([
+            "success" => true,
+            "message" => "User Management delete successfully.",
+        ]);
     }
 }
