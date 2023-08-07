@@ -15,8 +15,11 @@ class DepartmemtResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'code' => $this->code,
             'desc' => $this->desc,
+            'username' => $this->code,
+            'name' => $this->desc,
         ];
     }
 }
