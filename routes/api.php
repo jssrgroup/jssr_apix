@@ -27,9 +27,9 @@ function parseLocale()
     if (in_array($locale, $locales)) {
         app()->setLocale($locale);
         return $locale;
-    // }else{
-    //     app()->setLocale($default);
-    //     return $locale;
+        // }else{
+        //     app()->setLocale($default);
+        //     return $locale;
     }
 }
 
@@ -163,7 +163,7 @@ Route::group([
     'prefix' => 'v2'
 ], function ($router) {
     Route::group([
-        'prefix' => parseLocale(),//'{locale}',//
+        'prefix' => parseLocale(), //'{locale}',//
         // 'middleware' => 'setlocale'
     ], function ($router) {
         Route::get('/', function (Request $request) {
@@ -178,13 +178,13 @@ Route::group([
             // return $locale;
             // }
             // return $locale !== $default && in_array($locale, $locales);
-            return trans('validation.required').app()->currentLocale();
+            return trans('validation.required') . app()->currentLocale();
         });
         Route::group([
             'prefix' => 'department'
         ], function ($router) {
             Route::get('/all', [DepartmentController::class, 'index']);
-            Route::get('/{id}', [DepartmentController::class, 'getById']);          
+            Route::get('/{id}', [DepartmentController::class, 'getById']);
             Route::post('/add', [DepartmentController::class, 'store']);
             Route::put('/{id}/update', [DepartmentController::class, 'update']);
             Route::delete('/{id}/delete', [DepartmentController::class, 'destroy']);
@@ -204,12 +204,16 @@ Route::group([
         ], function ($router) {
             Route::get('/all', [DocumentController::class, 'index']);
             Route::get('/all/{depId}', [DocumentController::class, 'getAllByDep']);
+            Route::get('/{name}', [DocumentController::class, 'imageUpload']);
+            Route::post('/', [DocumentController::class, 'imageUploadPost']);
+            Route::delete('/{id}', [DocumentController::class, 'deleteFile']);
+            Route::post('/delete/{id}', [DocumentController::class, 'deleteFile']);
         });
         Route::group([
             'prefix' => 'userManagement'
         ], function ($router) {
             Route::get('/all', [UserManagementController::class, 'index']);
-            Route::get('/{id}', [UserManagementController::class, 'getById']);            
+            Route::get('/{id}', [UserManagementController::class, 'getById']);
             Route::post('/add', [UserManagementController::class, 'store']);
             Route::put('/{id}/update', [UserManagementController::class, 'update']);
             Route::delete('/{id}/delete', [UserManagementController::class, 'destroy']);
