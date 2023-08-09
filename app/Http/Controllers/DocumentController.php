@@ -53,6 +53,15 @@ class DocumentController extends Controller
 
     public function imageUploadPost(Request $request)
     {
+        // return response()->json([
+        //     "success" => true,
+        //     "message" => "You have successfully upload image.",
+        //     // "data" => $validator->validated()['filename'],
+        //     // "url" => $url,
+        //     // "path" => $path,
+        //     "data" => $request->all(),
+        // ]);
+        // exit;
         $requestData = $request->all();
         $validator = Validator::make($requestData, [
             // 'attachment' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

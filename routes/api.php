@@ -194,6 +194,7 @@ Route::group([
         ], function ($router) {
             Route::get('/all', [DocumentTypeController::class, 'index']);
             Route::get('/{depId}/all', [DocumentTypeController::class, 'getDocTypeByDep']);
+            Route::get('/{depId}/parent', [DocumentTypeController::class, 'getDocTypeByDepNotDoc']);
             Route::get('/{depId}/all/{docId}', [DocumentTypeController::class, 'getDocTypeByDepAndDoc']);
             Route::post('/add', [DocumentTypeController::class, 'store']);
             Route::put('/{id}/update', [DocumentTypeController::class, 'update']);

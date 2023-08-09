@@ -36,6 +36,15 @@ class DocumentTypeController extends Controller
         ], 200);
     }
 
+    public function getDocTypeByDepNotDoc($depId)
+    {
+        $docTypes = DocumentType::where('dep_id', $depId)->where('parent', null)->get();
+        return response()->json([
+            'message' => 'Document Type List',
+            'data' => DocumentTypeResource::collection($docTypes)
+        ], 200);
+    }
+
     public function getDocTypeByDepAndDoc($depId, $docId)
     {
         $docTypes = DocumentType::where('dep_id', $depId)->where('parent', $docId)->get();;
@@ -126,7 +135,7 @@ class DocumentTypeController extends Controller
         $docType = DocumentType::find($id);
         // // $docType = DocumentType::create($validated);
         $docType->update($input);
-        
+
 
         return response()->json([
             "success" => true,
