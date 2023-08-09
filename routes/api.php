@@ -186,8 +186,10 @@ Route::group([
             Route::get('/all', [DepartmentController::class, 'index']);
             Route::get('/{id}', [DepartmentController::class, 'getById']);
             Route::post('/add', [DepartmentController::class, 'store']);
-            Route::put('/{id}/update', [DepartmentController::class, 'update']);
-            Route::delete('/{id}/delete', [DepartmentController::class, 'destroy']);
+            Route::put('/{id}', [DepartmentController::class, 'update']);
+            Route::post('/{id}/update', [DepartmentController::class, 'update']);
+            Route::delete('/{id}', [DepartmentController::class, 'destroy']);
+            Route::post('/{id}/delete', [DepartmentController::class, 'destroy']);
         });
         Route::group([
             'prefix' => 'documentType'
@@ -197,8 +199,10 @@ Route::group([
             Route::get('/{depId}/parent', [DocumentTypeController::class, 'getDocTypeByDepNotDoc']);
             Route::get('/{depId}/all/{docId}', [DocumentTypeController::class, 'getDocTypeByDepAndDoc']);
             Route::post('/add', [DocumentTypeController::class, 'store']);
-            Route::put('/{id}/update', [DocumentTypeController::class, 'update']);
-            Route::delete('/{id}/delete', [DocumentTypeController::class, 'destroy']);
+            Route::put('/{id}', [DocumentTypeController::class, 'update']);
+            Route::post('/{id}/update', [DocumentTypeController::class, 'update']);
+            Route::delete('/{id}', [DocumentTypeController::class, 'destroy']);
+            Route::post('/{id}/delete', [DocumentTypeController::class, 'destroy']);
         });
         Route::group([
             'prefix' => 'document'
@@ -208,7 +212,7 @@ Route::group([
             Route::get('/{name}', [DocumentController::class, 'imageUpload']);
             Route::post('/', [DocumentController::class, 'imageUploadPost']);
             Route::delete('/{id}', [DocumentController::class, 'deleteFile']);
-            Route::post('/delete/{id}', [DocumentController::class, 'deleteFile']);
+            Route::post('/{id}/delete', [DocumentController::class, 'deleteFile']);
         });
         Route::group([
             'prefix' => 'userManagement'
@@ -216,8 +220,10 @@ Route::group([
             Route::get('/all', [UserManagementController::class, 'index']);
             Route::get('/{id}', [UserManagementController::class, 'getById']);
             Route::post('/add', [UserManagementController::class, 'store']);
-            Route::put('/{id}/update', [UserManagementController::class, 'update']);
-            Route::delete('/{id}/delete', [UserManagementController::class, 'destroy']);
+            Route::put('/{id}', [UserManagementController::class, 'update']);
+            Route::post('/{id}/update', [UserManagementController::class, 'update']);
+            Route::delete('/{id}', [UserManagementController::class, 'destroy']);
+            Route::post('/{id}/delete', [UserManagementController::class, 'destroy']);
         });
         Route::group([
             'prefix' => 'customer'
