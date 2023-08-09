@@ -24,6 +24,7 @@ class UserManagementResource extends JsonResource
             'dep' => $this->getDepartmentName($this->dep_id),
             'roleId' => $this->role_id,
             'role' => $this->getRoleName($this->role_id),
+            'statusId' => $this->status,
             'status' => $this->getStatus($this->status),
             'isDelete' => $this->is_delete,
         ];

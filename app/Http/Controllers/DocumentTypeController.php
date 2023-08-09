@@ -27,9 +27,18 @@ class DocumentTypeController extends Controller
         ], 200);
     }
 
+    public function getById($id)
+    {
+        $docTypes = DocumentType::find($id);
+        return response()->json([
+            'message' => 'Document Type List',
+            'data' => new DocumentTypeResource($docTypes)
+        ], 200);
+    }
+
     public function getDocTypeByDep($depId)
     {
-        $docTypes = DocumentType::where('dep_id', $depId)->get();;
+        $docTypes = DocumentType::where('dep_id', $depId)->get();
         return response()->json([
             'message' => 'Document Type List',
             'data' => DocumentTypeResource::collection($docTypes)

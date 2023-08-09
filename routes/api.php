@@ -16,6 +16,7 @@ use App\Http\Controllers\PersonalDataController;
 use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\UserPassController;
+use App\Models\DocumentType;
 
 // Function
 function parseLocale()
@@ -195,6 +196,7 @@ Route::group([
             'prefix' => 'documentType'
         ], function ($router) {
             Route::get('/all', [DocumentTypeController::class, 'index']);
+            Route::get('/{id}', [DocumentTypeController::class, 'getById']);
             Route::get('/{depId}/all', [DocumentTypeController::class, 'getDocTypeByDep']);
             Route::get('/{depId}/parent', [DocumentTypeController::class, 'getDocTypeByDepNotDoc']);
             Route::get('/{depId}/all/{docId}', [DocumentTypeController::class, 'getDocTypeByDepAndDoc']);
@@ -203,6 +205,10 @@ Route::group([
             Route::post('/{id}/update', [DocumentTypeController::class, 'update']);
             Route::delete('/{id}', [DocumentTypeController::class, 'destroy']);
             Route::post('/{id}/delete', [DocumentTypeController::class, 'destroy']);
+            Route::get('/{id}/parentDesc', function ($id) {
+                $docType = DocumentType::where('id', $id)->first();
+                return isset($docType['desc']) ? $docType['desc'] : null;
+            });
         });
         Route::group([
             'prefix' => 'document'
