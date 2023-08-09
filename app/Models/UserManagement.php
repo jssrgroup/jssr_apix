@@ -9,6 +9,6 @@ class UserManagement extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "user_id", "dep_id", "role_id",   "status", "is_delete",
+        "user_id", "dep_id", "role_id", "status", "is_delete",
     ];
 }
