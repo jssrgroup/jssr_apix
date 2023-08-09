@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Department;
+use App\Models\DocumentType;
 use App\Models\Member;
 use App\Models\UserAdmin;
 use DateTime;
@@ -26,6 +27,8 @@ class DocumentResource extends JsonResource
             'ref_dep' => $this->getDepartmentName($this->ref_dep_id),
             'ref_doc_type_id' => $this->ref_doc_type_id,
             'ref_doc_type' => $this->getDocTypeName($this->ref_doc_type_id),
+            'ref_doc_id' => $this->ref_doc_id,
+            'ref_doc' => $this->getDocTypeName($this->ref_doc_id),
             'image_name' => $this->image_name,
             'file_name' => $this->file_name,
             'expire_date_at' => $this->formatDate($this->expire_date_at),
@@ -64,22 +67,8 @@ class DocumentResource extends JsonResource
 
     function getDocTypeName($id)
     {
-        $name = 'เอกสารอื่นๆ';
-        switch ($id) {
-            case 1:
-                $name = 'เอกสารบริษัท';
-                break;
-            case 2:
-                $name = 'เอกสารพนักงาน';
-                break;
-            case 3:
-                $name = 'เอกสารลูกค้า';
-                break;
-            default:
-                $name = 'เอกสารอื่นๆ';
-                break;
-        }
-        return $name;
+        $docType = DocumentType::find($id);
+        return $docType['desc'];
     }
 
     function formatDate($date)

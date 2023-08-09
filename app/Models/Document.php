@@ -10,6 +10,6 @@ class Document extends Model
     use HasFactory;
     protected $fillable = [
         "image_name", "ref_id", "ref_dep_id",  "file_name", "expire_date_at",
-        "ref_doc_type_id", "ref_user_id"
+        "ref_doc_type_id", "ref_user_id", "ref_doc_id"
     ];
 }

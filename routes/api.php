@@ -206,15 +206,17 @@ Route::group([
             Route::delete('/{id}', [DocumentTypeController::class, 'destroy']);
             Route::post('/{id}/delete', [DocumentTypeController::class, 'destroy']);
             Route::get('/{id}/parentDesc', function ($id) {
-                $docType = DocumentType::where('id', $id)->first();
-                return isset($docType['desc']) ? $docType['desc'] : null;
+                // $docType = DocumentType::where('id', $id)->first();
+                // return isset($docType['desc']) ? $docType['desc'] : null;
+                $docType = DocumentType::find($id);
+                return $docType['desc'];
             });
         });
         Route::group([
             'prefix' => 'document'
         ], function ($router) {
             Route::get('/all', [DocumentController::class, 'index']);
-            Route::get('/all/{depId}', [DocumentController::class, 'getAllByDep']);
+            Route::get('/{depId}/all', [DocumentController::class, 'getAllByDep']);
             Route::get('/{name}', [DocumentController::class, 'imageUpload']);
             Route::post('/', [DocumentController::class, 'imageUploadPost']);
             Route::delete('/{id}', [DocumentController::class, 'deleteFile']);

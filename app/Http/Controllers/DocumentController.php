@@ -16,17 +16,17 @@ class DocumentController extends Controller
     {
         $departments = Document::all();
         return response()->json([
-            'message' => 'Department List',
+            'message' => 'Document List',
             'data' => DocumentResource::collection($departments)
         ], 200);
     }
 
     public function getAllByDep($depId)
     {
-        $departments = Document::where('ref_dep_id', $depId)->get();
+        $documents = Document::where('ref_dep_id', $depId)->get();
         return response()->json([
-            'message' => 'Department List',
-            'data' => DocumentResource::collection($departments)
+            'message' => 'Document List',
+            'data' => DocumentResource::collection($documents)
         ], 200);
     }
     
@@ -72,6 +72,7 @@ class DocumentController extends Controller
             'expireDate' => 'required|string',
             'docType' => 'required|string',
             'userId' => 'required|string',
+            'docId' => 'required|string',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -94,6 +95,7 @@ class DocumentController extends Controller
             'expire_date_at' => $request->expireDate,
             'ref_doc_type_id' => $request->docType,
             'ref_user_id' => $request->userId,
+            'ref_doc_id' => $request->docId,
             // 'expire_date_at' => Carbon::createFromFormat('Y-m-d', $request->expireDate)->format('Y-m-d H:i:s'),
         ]);
 
