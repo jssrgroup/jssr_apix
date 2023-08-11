@@ -26,6 +26,7 @@ class DocumentTypeResource extends JsonResource
             'parentDesc' => $this->getParentName($this->parent),
             'pattern' => $this->pattern,
             'expire' => $this->expire,
+            'expire_type' => $this->expire_type,
             'numAi' => $this->num_ai,
         ];
         // "", "", "", "", "", "", "",

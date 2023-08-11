@@ -10,6 +10,6 @@ class DocumentType extends Model
     use HasFactory;
 
     protected $fillable = [
-        "dep_id", "code", "desc", "parent", "pattern", "expire", "num_ai",
+        "dep_id", "code", "desc", "parent", "pattern", "expire", "expire_type", "num_ai",
     ];
 }

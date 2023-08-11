@@ -29,7 +29,8 @@ class UpdateDocumentTypeRequest extends FormRequest
             'desc' => 'required|string',
             'parent' => '',
             'pattern' => '',
-            'expire' => 'required|string',
+            'expire' => 'required|integer',
+            'expire_type' => 'required',
         ];
     }
 
@@ -43,6 +44,22 @@ class UpdateDocumentTypeRequest extends FormRequest
         return [
             'dep_id' => 'department',
             'desc' => 'description',
+            'expire_type' => 'expire type',
+        ];
+    }
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            // 'dep_id.required' => 'Department is required',
+            // 'desc.required' => 'Desc is required',
+            'expire.required' => 'วันหมดอายุ ห้ามว่าง',
+            'expire.integer' => 'เป็นตัวเลขเท่านั้น',
+            // 'required' => ':attribute ห้ามว่าง.',
         ];
     }
 }

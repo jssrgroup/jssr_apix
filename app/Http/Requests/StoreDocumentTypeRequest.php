@@ -30,7 +30,8 @@ class StoreDocumentTypeRequest extends FormRequest
             'desc' => 'required',
             'parent' => '',
             'pattern' => '',
-            'expire' => 'required',
+            'expire' => 'required|integer',
+            'expire_type' => 'required',
         ];
     }
     /**
@@ -43,6 +44,7 @@ class StoreDocumentTypeRequest extends FormRequest
         return [
             'dep_id' => 'department',
             'desc' => 'description',
+            'expire_type' => 'expire type',
         ];
     }
 
@@ -56,7 +58,8 @@ class StoreDocumentTypeRequest extends FormRequest
         return [
             // 'dep_id.required' => 'Department is required',
             // 'desc.required' => 'Desc is required',
-            'expire.required' => 'Expire is required',
+            'expire.required' => 'วันหมดอายุ ห้ามว่าง',
+            'expire.integer' => 'เป็นตัวเลขเท่านั้น',
             // 'required' => ':attribute ห้ามว่าง.',
         ];
     }
