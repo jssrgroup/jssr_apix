@@ -221,6 +221,13 @@ Route::group([
             Route::post('/', [DocumentController::class, 'imageUploadPost']);
             Route::delete('/{id}', [DocumentController::class, 'deleteFile']);
             Route::post('/{id}/delete', [DocumentController::class, 'deleteFile']);
+            Route::group([
+                'prefix' => 'report'
+            ], function ($router) {
+                Route::get('/expire', [DocumentController::class, 'getAllExpire']);
+                Route::get('/expire/{depId}/all', [DocumentController::class, 'getAllExpireByDepId']);
+                Route::get('/expire/{id}', [DocumentController::class, 'getAllExpireById']);
+            });
         });
         Route::group([
             'prefix' => 'userManagement'
