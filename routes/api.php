@@ -11,11 +11,13 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\ImageUploadCusController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PersonalDataController;
 use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\UserPassController;
+use App\Models\Document;
 use App\Models\DocumentType;
 
 // Function
@@ -217,7 +219,7 @@ Route::group([
         ], function ($router) {
             Route::get('/all', [DocumentController::class, 'index']);
             Route::get('/{depId}/all', [DocumentController::class, 'getAllByDep']);
-            Route::get('/{name}', [DocumentController::class, 'imageUpload']);
+            Route::get('/{name}', [DocumentController::class, 'imageUpload'])->middleware('jwt.auth.useradmin');
             Route::post('/', [DocumentController::class, 'imageUploadPost']);
             Route::delete('/{id}', [DocumentController::class, 'deleteFile']);
             Route::post('/{id}/delete', [DocumentController::class, 'deleteFile']);
@@ -239,6 +241,17 @@ Route::group([
             Route::post('/{id}/update', [UserManagementController::class, 'update']);
             Route::delete('/{id}', [UserManagementController::class, 'destroy']);
             Route::post('/{id}/delete', [UserManagementController::class, 'destroy']);
+        });
+        Route::group([
+            'prefix' => 'log'
+        ], function ($router) {
+            Route::get('/', [LogController::class, 'index']);
+            // Route::get('/', [LogController::class, 'index'])->middleware('jwt.auth.useradmin');
+            Route::post('/', [LogController::class, 'store']);
+            Route::get('/doc/{id}', function($id){
+                $doc = Document::find($id);
+                return $doc['image_name'];
+            });
         });
         Route::group([
             'prefix' => 'customer'

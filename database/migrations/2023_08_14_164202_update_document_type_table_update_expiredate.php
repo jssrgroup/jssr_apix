@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateDocumentsTableAddRefDoc extends Migration
+class UpdateDocumentTypeTableUpdateExpiredate extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class UpdateDocumentsTableAddRefDoc extends Migration
      */
     public function up()
     {
-        Schema::table('documents', function (Blueprint $table) {
-            $table->integer('ref_doc_id');
-            $table->integer('ref_user_id');
+        Schema::table('document_types', function (Blueprint $table) {
+            $table->integer('expire')->default(1)->change();
+            $table->string('expire_type', 8)->default('YEAR')->nullable();
+            // $table->integer('month')->change();
+            // $table->renameColumn('no', 'running_no');
         });
     }
 

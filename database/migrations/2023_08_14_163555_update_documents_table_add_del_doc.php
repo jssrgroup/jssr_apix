@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateDocumentsTableAddRefDoc extends Migration
+class UpdateDocumentsTableAddDelDoc extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,9 @@ class UpdateDocumentsTableAddRefDoc extends Migration
     public function up()
     {
         Schema::table('documents', function (Blueprint $table) {
-            $table->integer('ref_doc_id');
-            $table->integer('ref_user_id');
+            $table->integer('updated_by')->nullable();
+            $table->integer('deleted_by')->nullable();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

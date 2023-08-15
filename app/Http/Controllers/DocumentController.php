@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DocumentReportResource;
 use App\Http\Resources\DocumentResource;
+use App\Http\Resources\UserAdminResource;
 use App\Models\Document;
+use App\Models\Log;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Illuminate\Http\Request;
@@ -128,7 +131,8 @@ class DocumentController extends Controller
 
         return response()->json([
             'message' => 'Document Dep List',
-            'data' => $results
+            'data' => DocumentReportResource::collection($results)
+            // 'data' => $results
         ], 200);
     }
 
@@ -187,7 +191,7 @@ class DocumentController extends Controller
         ], 200);
     }
 
-    public function imageUpload($name)
+    public function imageUpload($name, Request $request)
     {
         $requestData = [];
         $requestData['name'] = $name;
@@ -200,11 +204,25 @@ class DocumentController extends Controller
         $key = env("AWS_KEY", "images");
         $temporarySignedUrl = Storage::disk('s3')->temporaryUrl($key . '/document/' . $validator->validated()['name'], now()->addMinutes(1));
 
+        $user = new UserAdminResource(auth('useradmins')->user());
+
+        $log = [
+            "class" => __CLASS__,
+            "method" => __METHOD__,
+            "behavior" => "get attachment from filename",
+            "user_id" => $user['INDX'],
+            "doc_id" => $request->docId,
+        ];
+
+        Log::create($log);
+
 
         return response()->json([
             "success" => true,
             "message" => "You have image.",
-            "url" => $temporarySignedUrl
+            "url" => $temporarySignedUrl,
+            // "user" => $log,
+            // "req" => $request->all(),
         ]);
     }
 
