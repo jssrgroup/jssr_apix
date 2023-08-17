@@ -163,7 +163,8 @@ Route::get('testRsa', [PersonalDataController::class, 'testRsa']);
 //     ]);
 // });
 Route::group([
-    'prefix' => 'v2'
+    'prefix' => 'v2',
+    'middleware' => 'jwt.auth.useradmin'
 ], function ($router) {
     Route::group([
         'prefix' => parseLocale(), //'{locale}',//

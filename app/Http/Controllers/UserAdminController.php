@@ -15,7 +15,7 @@ class UserAdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:useradmins', ['except' => ['index', 'demo', 'login', 'register','getById']]);
+        $this->middleware('auth:useradmins', ['except' => ['index', 'demo', 'login', 'register', 'getById']]);
     }
 
     public function index()
@@ -115,6 +115,8 @@ class UserAdminController extends Controller
 
             return response()->json(["status" => 200, "data" => [
                 "access_token" => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth('useradmins')->factory()->getTTL(),
                 "user" => new UserAdminResource($user),
             ]]);
         } catch (JWTException $e) {
@@ -159,7 +161,11 @@ class UserAdminController extends Controller
      */
     public function refresh()
     {
-        return $this->createNewToken(auth('useradmins')->refresh());
+        return response()->json([
+            "status" => 200,
+            "data" => $this->createNewToken(auth('useradmins')->refresh())->original
+            // "data" => new UserAdminResource($this->createNewToken(auth('useradmins')->refresh())->original)
+        ]);
     }
     /**
      * @OA\Get(
@@ -188,11 +194,15 @@ class UserAdminController extends Controller
 
     protected function createNewToken($token)
     {
+        $user = auth('useradmins')->user();
+        $userManagement = UserManagement::where('user_id', $user['INDX'])->first();
+        $user['role'] = $userManagement;
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('useradmins')->factory()->getTTL() * 60,
-            'user' => auth('useradmins')->user()
+            'expires_in' => auth('useradmins')->factory()->getTTL(),
+            'user' => new UserAdminResource($user),
         ]);
     }
 }
