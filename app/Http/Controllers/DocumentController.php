@@ -28,10 +28,43 @@ class DocumentController extends Controller
 
     public function getAllByDep($depId)
     {
-        $documents = Document::where('ref_dep_id', $depId)->get();
+        $documents = Document::where('ref_dep_id', $depId)->where('is_delete', 0)->get();
         return response()->json([
             'message' => 'Document List',
             'data' => DocumentResource::collection($documents)
+        ], 200);
+    }
+
+    public function docDashboard($depId, $userId)
+    {
+        $query = "SELECT 'เอกสารทั้งหมด' `desc`, COUNT(*) count
+        FROM documents
+        WHERE ref_dep_id = ?
+        UNION
+        SELECT 'เอกสารของฉัน' `desc`, COUNT(*) count
+        FROM documents
+        WHERE ref_dep_id = ?
+        AND ref_user_id = ?
+        UNION
+        SELECT 'เอกสารหมดอายุใน 7 วัน' `desc`, COUNT(*) count
+        FROM documents
+        WHERE is_delete = 1
+        AND  ref_dep_id = ?
+        AND DATEDIFF(expire_date_at, NOW()) < 7
+        UNION
+        SELECT 'เอกสารหมดอายุแล้ว' `desc`, COUNT(*) count
+        FROM documents
+        WHERE is_delete = 1
+        AND ref_dep_id = ?";
+
+        // $documents = DB::select(DB::raw($query), ['depId' => $depId, 'userId' => $userId]);
+        $documents = DB::select(DB::raw($query), [$depId, $depId, $userId, $depId, $depId]);
+
+        return response()->json([
+            'message' => 'Document Dashboard Data',
+            'data' => $documents,
+            'depId' => $depId,
+            'userId' => $userId,
         ], 200);
     }
 
@@ -39,7 +72,7 @@ class DocumentController extends Controller
     {
         $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date FROM (
             SELECT
-            documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id,departments.`desc` dep_desc, image_name, file_name,
+            documents.id, ref_id, ref_doc_id doc_id, doc.desc doc_desc, type.id doc_type_id, type.desc type_desc, ref_user_id, ref_dep_id,departments.`desc` dep_desc, image_name, file_name,
             DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
             DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date
             FROM `documents`
@@ -131,6 +164,7 @@ class DocumentController extends Controller
         LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
         LEFT JOIN document_types type ON doc.parent = type.id
         LEFT JOIN departments ON documents.ref_dep_id = departments.id
+        WHERE is_delete = 0
         ) t
         WHERE ref_dep_id = ?";
 

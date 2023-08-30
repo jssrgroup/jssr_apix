@@ -228,6 +228,7 @@ Route::group([
                 'prefix' => 'report'
             ], function ($router) {
                 Route::get('/expire', [DocumentController::class, 'getAllExpire']);
+                Route::get('/dashboard/{depId}/{userId}', [DocumentController::class, 'docDashboard']);
                 Route::get('/expire/{depId}/all', [DocumentController::class, 'getAllExpireByDepId']);
                 Route::get('/expire/{id}', [DocumentController::class, 'getAllExpireById']);
                 Route::get('/expired', [DocumentController::class, 'getAllExpired']);
