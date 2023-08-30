@@ -35,10 +35,33 @@ class DocumentController extends Controller
         ], 200);
     }
 
+    public function getAllExpired()
+    {
+        $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date FROM (
+            SELECT
+            documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id,departments.`desc` dep_desc, image_name, file_name,
+            DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
+            DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date
+            FROM `documents`
+            LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
+            LEFT JOIN document_types type ON doc.parent = type.id
+            LEFT JOIN departments ON documents.ref_dep_id = departments.id
+            WHERE is_delete = 1
+        ) t";
+
+        $documents = DB::select(DB::raw($query));
+
+
+        return response()->json([
+            'message' => 'Document Remove List',
+            'data' => $documents
+        ], 200);
+    }
+
     public function getAllExpire()
     {
         $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date,
-        DATEDIFF(STR_TO_DATE(document_expire,'%d/%m/%Y'), NOW()) doc_remain_date, 
+        DATEDIFF(STR_TO_DATE(document_expire,'%d/%m/%Y'), NOW()) doc_remain_date,
         DATEDIFF(STR_TO_DATE(doctype_expire,'%d/%m/%Y'), NOW()) type_remain_date FROM (
         SELECT
         documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id,departments.`desc` dep_desc, image_name, file_name,
@@ -51,7 +74,7 @@ class DocumentController extends Controller
             WHEN doc.expire_type = 'YEAR' THEN DATE_ADD(documents.created_at, INTERVAL doc.expire YEAR)
             ELSE NULL
           END
-        ,'%d/%m/%Y') document_expire, 
+        ,'%d/%m/%Y') document_expire,
         CONCAT(doc.expire,' ',doc.expire_type) document_expire_type,
         DATE_FORMAT(
         CASE
@@ -60,12 +83,12 @@ class DocumentController extends Controller
             WHEN type.expire_type = 'YEAR' THEN DATE_ADD(documents.created_at, INTERVAL type.expire YEAR)
             ELSE NULL
           END
-        ,'%d/%m/%Y') doctype_expire, 
+        ,'%d/%m/%Y') doctype_expire,
         CONCAT(type.expire,' ',type.expire_type) doctype_expire_type
         FROM `documents`
         LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
         LEFT JOIN document_types type ON doc.parent = type.id
-        LEFT JOIN departments ON documents.ref_dep_id = departments.id        
+        LEFT JOIN departments ON documents.ref_dep_id = departments.id
         ) t";
 
         $documents = DB::select(DB::raw($query));
@@ -80,7 +103,7 @@ class DocumentController extends Controller
     public function getAllExpireByDepId($depId)
     {
         $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date,
-        DATEDIFF(STR_TO_DATE(document_expire,'%d/%m/%Y'), NOW()) doc_remain_date, 
+        DATEDIFF(STR_TO_DATE(document_expire,'%d/%m/%Y'), NOW()) doc_remain_date,
         DATEDIFF(STR_TO_DATE(doctype_expire,'%d/%m/%Y'), NOW()) type_remain_date FROM (
         SELECT
         documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id, departments.`desc` dep_desc, image_name, file_name,
@@ -93,7 +116,7 @@ class DocumentController extends Controller
             WHEN doc.expire_type = 'YEAR' THEN DATE_ADD(documents.created_at, INTERVAL doc.expire YEAR)
             ELSE NULL
           END
-        ,'%d/%m/%Y') document_expire, 
+        ,'%d/%m/%Y') document_expire,
         CONCAT(doc.expire,' ',doc.expire_type) document_expire_type,
         DATE_FORMAT(
         CASE
@@ -102,12 +125,12 @@ class DocumentController extends Controller
             WHEN type.expire_type = 'YEAR' THEN DATE_ADD(documents.created_at, INTERVAL type.expire YEAR)
             ELSE NULL
           END
-        ,'%d/%m/%Y') doctype_expire, 
+        ,'%d/%m/%Y') doctype_expire,
         CONCAT(type.expire,' ',type.expire_type) doctype_expire_type
         FROM `documents`
         LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
         LEFT JOIN document_types type ON doc.parent = type.id
-        LEFT JOIN departments ON documents.ref_dep_id = departments.id        
+        LEFT JOIN departments ON documents.ref_dep_id = departments.id
         ) t
         WHERE ref_dep_id = ?";
 
@@ -139,7 +162,7 @@ class DocumentController extends Controller
     public function getAllExpireById($id)
     {
         $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date,
-        DATEDIFF(STR_TO_DATE(document_expire,'%d/%m/%Y'), NOW()) doc_remain_date, 
+        DATEDIFF(STR_TO_DATE(document_expire,'%d/%m/%Y'), NOW()) doc_remain_date,
         DATEDIFF(STR_TO_DATE(doctype_expire,'%d/%m/%Y'), NOW()) type_remain_date FROM (
         SELECT
         documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id, departments.`desc` dep_desc, image_name, file_name,
@@ -152,7 +175,7 @@ class DocumentController extends Controller
             WHEN doc.expire_type = 'YEAR' THEN DATE_ADD(documents.created_at, INTERVAL doc.expire YEAR)
             ELSE NULL
           END
-        ,'%d/%m/%Y') document_expire, 
+        ,'%d/%m/%Y') document_expire,
         CONCAT(doc.expire,' ',doc.expire_type) document_expire_type,
         DATE_FORMAT(
         CASE
@@ -161,12 +184,12 @@ class DocumentController extends Controller
             WHEN type.expire_type = 'YEAR' THEN DATE_ADD(documents.created_at, INTERVAL type.expire YEAR)
             ELSE NULL
           END
-        ,'%d/%m/%Y') doctype_expire, 
+        ,'%d/%m/%Y') doctype_expire,
         CONCAT(type.expire,' ',type.expire_type) doctype_expire_type
         FROM `documents`
         LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
         LEFT JOIN document_types type ON doc.parent = type.id
-        LEFT JOIN departments ON documents.ref_dep_id = departments.id        
+        LEFT JOIN departments ON documents.ref_dep_id = departments.id
         ) t
         WHERE id = ?";
 
@@ -318,6 +341,66 @@ class DocumentController extends Controller
             ]);
             $message = "Delete Object";
             $customer->delete();
+        } catch (S3Exception $e) {
+            $message = $e->getAwsErrorMessage();
+        }
+
+        return response()->json([
+            "success" => true,
+            "message" => $message,
+            "bucket" => $bucket,
+            "key" => $key,
+            "keyname" => $keyname,
+            "result" => $result,
+        ]);
+    }
+
+    // For Cron job
+    public function getAllExpireForDel()
+    {
+        $query = "SELECT * FROM (
+            SELECT
+            documents.id, ref_id, ref_doc_id doc_id, ref_user_id, ref_dep_id, image_name, file_name,
+            DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
+            DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date,
+            DATEDIFF(expire_date_at, NOW()) remain_date
+            FROM `documents`
+	        WHERE is_delete = 0
+        )t
+        WHERE remain_date < 0";
+
+        $documents = DB::select(DB::raw($query));
+
+        return $documents;
+    }
+
+    // For Cron job
+    public function deleteFlag($id)
+    {
+        $document = Document::find($id);
+
+        $bucket = env("AWS_BUCKET", "apix.jssr.co.th");
+        $key = env("AWS_KEY", "images");
+        $region = env("AWS_DEFAULT_REGION", "ap-southeast-1");
+        $keyname = $key . '/document/' . $document['file_name'];
+
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region'  => $region
+        ]);
+
+        try {
+            $result = $s3->deleteObject([
+                'Bucket' => $bucket,
+                'Key'    => $keyname
+            ]);
+            $message = "Delete Object";
+            // $document->delete();
+            $document->update([
+                'is_delete' => 1,
+                'deleted_by' => -99,
+                'deleted_at' => now(),
+            ]);
         } catch (S3Exception $e) {
             $message = $e->getAwsErrorMessage();
         }

@@ -15,6 +15,7 @@ class UpdateDocumentsTableAddDelDoc extends Migration
     {
         Schema::table('documents', function (Blueprint $table) {
             $table->integer('updated_by')->nullable();
+            $table->integer('is_delete')->default(0);
             $table->integer('deleted_by')->nullable();
             $table->timestamp('deleted_at')->nullable();
         });

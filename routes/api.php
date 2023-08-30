@@ -230,6 +230,9 @@ Route::group([
                 Route::get('/expire', [DocumentController::class, 'getAllExpire']);
                 Route::get('/expire/{depId}/all', [DocumentController::class, 'getAllExpireByDepId']);
                 Route::get('/expire/{id}', [DocumentController::class, 'getAllExpireById']);
+                Route::get('/expired', [DocumentController::class, 'getAllExpired']);
+                Route::put('/expireDel/{id}', [DocumentController::class, 'deleteFlag']);
+                Route::post('/expireDelUpdate/{id}', [DocumentController::class, 'deleteFlag']);
             });
         });
         Route::group([
