@@ -91,6 +91,30 @@ class DocumentController extends Controller
         ], 200);
     }
 
+    public function getAllExpiredByDep($depId)
+    {
+        $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date FROM (
+            SELECT
+            documents.id, ref_id, ref_doc_id doc_id, doc.desc doc_desc, type.id doc_type_id, type.desc type_desc, ref_user_id, ref_dep_id,departments.`desc` dep_desc, image_name, file_name,
+            DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
+            DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date
+            FROM `documents`
+            LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
+            LEFT JOIN document_types type ON doc.parent = type.id
+            LEFT JOIN departments ON documents.ref_dep_id = departments.id
+            WHERE is_delete = 1
+        ) t
+        WHERE ref_dep_id = ?";
+
+        $documents = DB::select(DB::raw($query),[$depId]);
+
+
+        return response()->json([
+            'message' => 'Document Remove List',
+            'data' => $documents
+        ], 200);
+    }
+
     public function getAllExpire()
     {
         $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date,
