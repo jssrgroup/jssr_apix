@@ -32,6 +32,7 @@ class DocumentResource extends JsonResource
             'image_name' => $this->image_name,
             'file_name' => $this->file_name,
             'expire_date_at' => $this->formatDate($this->expire_date_at),
+            'expire_num' => $this->expireNum($this->expire_date_at),
             'ref_user_id' => $this->ref_user_id,
             'ref_user' => $this->getUserManagementName($this->ref_user_id),
         ];
@@ -69,6 +70,15 @@ class DocumentResource extends JsonResource
     {
         $docType = DocumentType::find($id);
         return $docType['desc'];
+    }
+
+    function expireNum($date)
+    {
+        // Create a DateTime object from the date string
+        $date = new DateTime($date);
+        $now = new DateTime();
+
+        return intval(date_diff($now, $date)->format('%R%a'));
     }
 
     function formatDate($date)

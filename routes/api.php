@@ -230,6 +230,10 @@ Route::group([
                 Route::get('/expire', [DocumentController::class, 'getAllExpire']);
                 Route::get('/dashboard/{depId}/{userId}', [DocumentController::class, 'docDashboard']);
                 Route::get('/expire/{depId}/all', [DocumentController::class, 'getAllExpireByDepId']);
+                Route::get('/expiring/{depId}/all', [DocumentController::class, 'getAllExpiringByDepId']);
+                Route::get('/expired/{depId}/all', [DocumentController::class, 'getAllExpiredByDepId']);
+                Route::get('/department/{depId}/user/{userId}/all', [DocumentController::class, 'getAllByDepAndUser']);
+                Route::get('/department/{depId}/all', [DocumentController::class, 'getAllByDepId']);
                 Route::get('/expire/{id}', [DocumentController::class, 'getAllExpireById']);
                 Route::get('/expired', [DocumentController::class, 'getAllExpired']);
                 Route::get('/{depId}/expired', [DocumentController::class, 'getAllExpiredByDep']);

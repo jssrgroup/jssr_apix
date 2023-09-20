@@ -28,7 +28,7 @@ class DocumentController extends Controller
 
     public function getAllByDep($depId)
     {
-        $documents = Document::where('ref_dep_id', $depId)->where('is_delete', 0)->get();
+        $documents = Document::where('ref_dep_id', $depId)->get();
         return response()->json([
             'message' => 'Document List',
             'data' => DocumentResource::collection($documents)
@@ -48,14 +48,13 @@ class DocumentController extends Controller
         UNION
         SELECT 'เอกสารหมดอายุใน 7 วัน' `desc`, COUNT(*) count
         FROM documents
-        WHERE is_delete = 1
-        AND  ref_dep_id = ?
-        AND DATEDIFF(expire_date_at, NOW()) < 7
+        WHERE ref_dep_id = ?
+        AND DATEDIFF(expire_date_at, NOW())  BETWEEN 0 AND 6
         UNION
         SELECT 'เอกสารหมดอายุแล้ว' `desc`, COUNT(*) count
         FROM documents
-        WHERE is_delete = 1
-        AND ref_dep_id = ?";
+        WHERE ref_dep_id = ?
+        AND DATEDIFF(expire_date_at, NOW()) < 0";
 
         // $documents = DB::select(DB::raw($query), ['depId' => $depId, 'userId' => $userId]);
         $documents = DB::select(DB::raw($query), [$depId, $depId, $userId, $depId, $depId]);
@@ -106,7 +105,7 @@ class DocumentController extends Controller
         ) t
         WHERE ref_dep_id = ?";
 
-        $documents = DB::select(DB::raw($query),[$depId]);
+        $documents = DB::select(DB::raw($query), [$depId]);
 
 
         return response()->json([
@@ -214,6 +213,107 @@ class DocumentController extends Controller
             'message' => 'Document Dep List',
             'data' => DocumentReportResource::collection($results)
             // 'data' => $results
+        ], 200);
+    }
+
+    public function getAllExpiringByDepId($depId)
+    {
+        $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date
+        FROM (
+            SELECT
+            documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id, departments.`desc` dep_desc, image_name, file_name,
+            DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
+            DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date
+            FROM `documents`
+            LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
+            LEFT JOIN document_types type ON doc.parent = type.id
+            LEFT JOIN departments ON documents.ref_dep_id = departments.id
+        -- WHERE is_delete = 0
+        ) t
+        WHERE ref_dep_id = ?
+        AND DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) BETWEEN 0 AND 6";
+
+        $results = DB::select(DB::raw($query), [$depId]);
+
+        return response()->json([
+            'message' => 'Document Dep List',
+            // 'data' => DocumentReportResource::collection($results)
+            'data' => $results
+        ], 200);
+    }
+
+    public function getAllExpiredByDepId($depId)
+    {
+        $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date
+        FROM (
+            SELECT
+            documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id, departments.`desc` dep_desc, image_name, file_name,
+            DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
+            DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date
+            FROM `documents`
+            LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
+            LEFT JOIN document_types type ON doc.parent = type.id
+            LEFT JOIN departments ON documents.ref_dep_id = departments.id
+        -- WHERE is_delete = 0
+        ) t
+        WHERE ref_dep_id = ?
+        AND DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) < 0";
+
+        $results = DB::select(DB::raw($query), [$depId]);
+
+        return response()->json([
+            'message' => 'Document Dep List',
+            // 'data' => DocumentReportResource::collection($results)
+            'data' => $results
+        ], 200);
+    }
+
+    public function getAllByDepAndUser($depId, $userId)
+    {
+        $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date
+        FROM (
+            SELECT
+            documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id, departments.`desc` dep_desc, image_name, file_name,
+            DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
+            DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date
+            FROM `documents`
+            LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
+            LEFT JOIN document_types type ON doc.parent = type.id
+            LEFT JOIN departments ON documents.ref_dep_id = departments.id
+        ) t
+        WHERE ref_dep_id = ?
+        AND ref_user_id = ?";
+
+        $results = DB::select(DB::raw($query), [$depId, $userId]);
+
+        return response()->json([
+            'message' => 'Document Dep List',
+            // 'data' => DocumentReportResource::collection($results)
+            'data' => $results
+        ], 200);
+    }
+
+    public function getAllByDepId($depId)
+    {
+        $query = "SELECT *, DATEDIFF(STR_TO_DATE(expire_doc_date,'%d/%m/%Y'), NOW()) remain_date
+        FROM (
+            SELECT
+            documents.id, ref_id, ref_doc_id doc_id, doc.parent doc_type_id, ref_user_id, ref_dep_id, departments.`desc` dep_desc, image_name, file_name,
+            DATE_FORMAT(documents.created_at,'%d/%m/%Y') create_doc_date,
+            DATE_FORMAT(expire_date_at,'%d/%m/%Y') expire_doc_date
+            FROM `documents`
+            LEFT JOIN document_types doc ON documents.ref_doc_id = doc.id
+            LEFT JOIN document_types type ON doc.parent = type.id
+            LEFT JOIN departments ON documents.ref_dep_id = departments.id
+        ) t
+        WHERE ref_dep_id = ?";
+
+        $results = DB::select(DB::raw($query), [$depId]);
+
+        return response()->json([
+            'message' => 'Document Dep List',
+            // 'data' => DocumentReportResource::collection($results)
+            'data' => $results
         ], 200);
     }
 
