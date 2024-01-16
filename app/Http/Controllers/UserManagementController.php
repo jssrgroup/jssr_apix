@@ -58,6 +58,10 @@ class UserManagementController extends Controller
             return $value !== null;
         });
 
+        if (!isset($input['status'])) {
+            $input['status'] = 0;
+        }
+
         $userManagement = UserManagement::create($input);
 
         return response()->json([
@@ -104,9 +108,13 @@ class UserManagementController extends Controller
             return $value !== null;
         });
 
+        if (!isset($input['status'])) {
+            $input['status'] = 0;
+        }
+
         $userManagement = UserManagement::find($id);
         $userManagement->update($input);
-        
+
 
         return response()->json([
             "success" => true,
