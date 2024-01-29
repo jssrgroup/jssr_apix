@@ -7,6 +7,7 @@ use App\Http\Resources\DocumentResource;
 use App\Http\Resources\UserAdminResource;
 use App\Models\Document;
 use App\Models\Log;
+use App\Models\UserAdmin;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use Illuminate\Http\Request;
@@ -19,16 +20,18 @@ class DocumentController extends Controller
 {
     public function index()
     {
-        $departments = Document::all();
+        $documents = Document::all();
         return response()->json([
             'message' => 'Document List',
-            'data' => DocumentResource::collection($departments)
+            'data' => DocumentResource::collection($documents)
         ], 200);
     }
 
     public function getAllByDep($depId)
     {
-        $documents = Document::where('ref_dep_id', $depId)->get();
+        $documents = Document::where('ref_dep_id', $depId)
+        ->where('is_delete', 0)
+        ->get();
         return response()->json([
             'message' => 'Document List',
             'data' => DocumentResource::collection($documents)
@@ -557,6 +560,49 @@ class DocumentController extends Controller
             $document->update([
                 'is_delete' => 1,
                 'deleted_by' => -99,
+                'deleted_at' => now(),
+            ]);
+        } catch (S3Exception $e) {
+            $message = $e->getAwsErrorMessage();
+        }
+
+        return response()->json([
+            "success" => true,
+            "message" => $message,
+            "bucket" => $bucket,
+            "key" => $key,
+            "keyname" => $keyname,
+            "result" => $result,
+        ]);
+    }
+
+    public function deleteFlagByUser($id)
+    {
+        $userId = auth('useradmins')->user()['INDX'];
+        // $userArray = json_decode($user->userProfile(), 1);
+        // return $userId;
+        $document = Document::find($id);
+
+        $bucket = env("AWS_BUCKET", "apix.jssr.co.th");
+        $key = env("AWS_KEY", "images");
+        $region = env("AWS_DEFAULT_REGION", "ap-southeast-1");
+        $keyname = $key . '/document/' . $document['file_name'];
+
+        $s3 = new S3Client([
+            'version' => 'latest',
+            'region'  => $region
+        ]);
+
+        try {
+            $result = $s3->deleteObject([
+                'Bucket' => $bucket,
+                'Key'    => $keyname
+            ]);
+            $message = "Delete Object";
+            // $document->delete();
+            $document->update([
+                'is_delete' => 1,
+                'deleted_by' => $userId,
                 'deleted_at' => now(),
             ]);
         } catch (S3Exception $e) {

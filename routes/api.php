@@ -239,6 +239,8 @@ Route::group([
                 Route::get('/{depId}/expired', [DocumentController::class, 'getAllExpiredByDep']);
                 Route::put('/expireDel/{id}', [DocumentController::class, 'deleteFlag']);
                 Route::post('/expireDelUpdate/{id}', [DocumentController::class, 'deleteFlag']);
+                Route::put('/expireDelByUser/{id}', [DocumentController::class, 'deleteFlagByUser']);
+                Route::post('/expireDelByUserUpdate/{id}', [DocumentController::class, 'deleteFlagByUser']);
             });
         });
         Route::group([
@@ -258,7 +260,7 @@ Route::group([
             Route::get('/', [LogController::class, 'index']);
             // Route::get('/', [LogController::class, 'index'])->middleware('jwt.auth.useradmin');
             Route::post('/', [LogController::class, 'store']);
-            Route::get('/doc/{id}', function($id){
+            Route::get('/doc/{id}', function ($id) {
                 $doc = Document::find($id);
                 return $doc['image_name'];
             });
